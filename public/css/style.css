@@ -1,0 +1,40 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#header {
+    /*width: 100%;*/
+    background-color: #ededed;
+    /*padding-top: 30px;*/
+}
+
+.navbar {
+    margin-top: 15px;
+}
+
+.navbar ul {
+    display: flex;
+    list-style: none;
+    justify-content: flex-end;
+}
+
+.navbar ul li {
+    margin-left: 30px;
+}
+
+.navbar ul li a {
+
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: Montserrat;
+    color: #000000;
+}
+
+.navbar ul li a:hover {
+    font-weight: bold;
+}
+
+.navbar ul li a:focus {
+    font-weight: bold;
+}
