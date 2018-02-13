@@ -1,5 +1,5 @@
 $(document).ready(function () {
-
+console.log("I am here");
     $('form').submit(function (event) {
         event.preventDefault();
         var $that = $(this),

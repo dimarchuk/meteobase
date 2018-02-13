@@ -11,11 +11,14 @@ class Kode_knController extends Controller
     {
         $regions = DB::table('CAT_OBL')->get();
         $stations = DB::table('CAT_STATION')->select('IND_ST', 'NAME_ST')->get();
-        $date = [];
-        foreach ($regions as $key => $region) {
-            echo "{$key} => {$region->NAME_OBL} <br>";
-        }
-//        echo $region_name[2]->NAME_OBL;
+//        foreach ($regions as $key => $region) {
+//            echo "{$key} => {$region->NAME_OBL} <br>";
+//        }
+        $data['regions'] = $regions;
+        $data['stations'] = $stations;
+//        echo gettype($data['regions']);
+//        var_dump($data['regions']);
+        //        echo $region_name[2]->NAME_OBL;
 
 //select obl and station from cat_station and from cat_obl
 //        $users = DB::table('CAT_OBL')
@@ -23,6 +26,9 @@ class Kode_knController extends Controller
 //            ->select('CAT_OBL.*', 'CAT_STATION.NAME_ST')
 //            ->get();
 //        var_dump($users);
-        return view('kode_kn');
+        return view('/site.kode_kn', array(
+            'regions' => $regions,
+            'stations' => $stations
+        ));
     }
 }
