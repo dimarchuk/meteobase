@@ -23,13 +23,15 @@
                         <label>Назва області:</label>
                         <div class="row">
                             <div class="col-sm-12">
-                                <select class="form-control" name="regionName[]" id="region-name" multiple size="6">
+                                <select class="form-control" name="regionName[]" id="region-name" size="6" multiple>
                                     {{--<option selected disabled hidden>Выберіть область</option>--}}
                                     @foreach($regions as $key => $region)
                                         @if($key == 0)
-                                            continue;
+                                            @continue
                                         @else
-                                            <?="<option value=\"{$key}\">{$region->NAME_OBL}</option>"?>
+                                            @php
+                                                echo "<option value=\"{$region->OBL_ID}\">{$region->NAME_OBL}</option>"?>
+                                            @endphp
                                         @endif
                                     @endforeach
                                 </select>
@@ -38,20 +40,23 @@
                     </div>
                 @endif
 
-                <div class="form-group">
-                    <label>Назва станції:</label>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <select class="form-control" name="stationName[]" id="station-name" multiple>
-                                <option selected disabled hidden>Выберіть станцію</option>
-                                <option value="Станція 1">Станція 1</option>
-                                <option value="Станція 2">Станція 2</option>
-                                <option value="Станція 3">Станція 3</option>
-                                <option value="Станція 4">Станція 4</option>
-                            </select>
+                @if(isset($stations) && is_object($stations))
+                    <div class="form-group">
+                        <label>Назва станції:</label>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <select class="form-control" name="stationName[]" id="station-name" size="6" multiple>
+                                    {{--<option selected disabled hidden>Выберіть станцію</option>--}}
+                                    @foreach($stations as $station)
+                                        @php
+                                            echo "<option value=\"{$station->IND_ST}\">{$station->NAME_ST}</option>"
+                                        @endphp
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
 
                 <div class="form-group">
                     <label>Дані:</label>
