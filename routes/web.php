@@ -30,3 +30,16 @@ Route::post('/', function () {
         exit;
     } else echo "data: {$_POST['form_data']}";
 });
+
+Route::auth();
+//Auth::routes();
+
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
+    Route::get('/', function () {
+        echo "it`s admin";
+        dd(Auth::user()->id);
+    });
+});

@@ -1,6 +1,5 @@
 $(document).ready(function () {
 
-
     /**
      * Prototype for correct date display
      * @returns {string}

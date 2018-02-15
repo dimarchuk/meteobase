@@ -64,7 +64,7 @@
                         <div class="col-sm-12">
                             <select class="form-control" name="collumns[]" id="collumns" size="4" multiple>
                                 <option selected disabled hidden>Выберіть дані</option>
-                                <option value="IND_ST">Індекс станції</option>
+                                <option selected value="IND_ST">Індекс станції</option>
                                 <option value="NAME_ST">Назва станції</option>
                                 <option value="XGEO">X коордтната</option>
                                 <option value="YGEO">Y коордтната</option>
