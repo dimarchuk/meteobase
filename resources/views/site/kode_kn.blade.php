@@ -1,8 +1,4 @@
-@extends('layouts.site')
-
-@section('header')
-    @include('site.header')
-@endsection
+@extends('layouts.app')
 
 @section('content')
     @include('site.content_kode_kn')

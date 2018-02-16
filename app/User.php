@@ -33,6 +33,9 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    /**
+     * @return mixed
+     */
     function IsAdmin() {
         return $this->admin;
     }
