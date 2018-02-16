@@ -46,7 +46,7 @@
                     <!-- Authentication Links -->
                     @guest
                         <li><a href="/login">Login</a></li>
-                        <li><a href="/register">Register</a></li>
+                        {{--<li><a href="/register">Register</a></li>--}}
                     @else
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -55,6 +55,11 @@
                             </a>
 
                             <ul class="dropdown-menu">
+                                @if(Auth::user()->IsAdmin())
+                                    <li>
+                                        <a href="/register">Register new user</a>
+                                    </li>
+                                @endif
                                 <li>
                                     <a href="/logout"
                                        onclick="event.preventDefault();
