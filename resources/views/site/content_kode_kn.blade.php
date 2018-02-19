@@ -40,9 +40,8 @@
                                 <label>Назва області:</label>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <select class="form-control" name="regionName[]" id="region-name" size="6"
+                                        <select class="form-control" name="regionName[]" id="region-name" size="9"
                                                 multiple>
-                                            {{--<option selected disabled hidden>Выберіть область</option>--}}
                                             @foreach($regions as $key => $region)
                                                 @if($key == 0)
                                                     @continue
@@ -63,9 +62,8 @@
                                 <label>Назва станції:</label>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <select class="form-control" name="stationName[]" id="station-name" size="6"
+                                        <select class="form-control" name="stationName[]" id="station-name" size="9"
                                                 multiple>
-                                            {{--<option selected disabled hidden>Выберіть станцію</option>--}}
                                             @foreach($stations as $station)
                                                 @php
                                                     echo "<option value=\"{$station->IND_ST}\">{$station->NAME_ST}</option>"
@@ -77,20 +75,28 @@
                             </div>
                         @endif
 
-                        <div class="form-group">
-                            <label>Дані:</label>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <select class="form-control" name="collumns[]" id="collumns" size="4" multiple>
-                                        <option selected disabled hidden>Выберіть дані</option>
-                                        <option selected value="IND_ST">Індекс станції</option>
-                                        <option value="NAME_ST">Назва станції</option>
-                                        <option value="XGEO">X коордтната</option>
-                                        <option value="YGEO">Y коордтната</option>
-                                    </select>
+                        @if(isset($categories) && is_object($categories))
+                            <div class="form-group">
+                                <label>Дані:</label>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <select class="form-control" name="collumns[]" id="collumns" size="9" multiple>
+                                            @foreach($categories as $category)
+                                                @if($category->selekted_col == true)
+                                                    @php
+                                                        echo "<option selected value=\"{$category->code_col_name}\">{$category->col_name}</option>"
+                                                    @endphp
+                                                @else
+                                                    @php
+                                                        echo "<option value=\"{$category->code_col_name}\">{$category->col_name}</option>"
+                                                    @endphp
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                         <button type="submit" class="btn btn-primary" style="width: 150px"> ОК</button>
                     </form>
                 </div>

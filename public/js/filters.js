@@ -35,7 +35,7 @@ $(document).ready(function () {
      * Select more then one elements
      */
     jQuery('option').mousedown(function (e) {
-        // e.preventDefault();
+        e.preventDefault();
         jQuery(this).toggleClass('selected');
 
         jQuery(this).prop('selected', !jQuery(this).prop('selected'));
