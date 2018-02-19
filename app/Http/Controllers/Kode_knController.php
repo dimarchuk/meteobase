@@ -22,24 +22,34 @@ class Kode_knController extends Controller
      */
     public function show(Request $request)
     {
+        $currentDate = date('Y-m-d');
+
         $regions = DB::table('CAT_OBL')->get();
         $stations = DB::table('CAT_STATION')->select('IND_ST', 'NAME_ST')->get();
         $categories = Category::all();
+        $selectedCategories = [];
 
-        //Select user categories
-        //переробити збереження налаштувань користувача (зберігати в строку серіалізованого вигляду)
-//        $test1 = DB::table('user_categories')
-//            ->join('users', 'user_id', '=', 'users.id')
-//            ->join('categories', 'categories_id', '=', 'categories.id')
-//            ->select('categories.id', 'categories.col_name', 'categories.code_col_name', 'categories.selekted_col')
-//            ->where('user_categories.user_id', '2')
-//            ->get();
-//        var_dump($category);
+        foreach ($categories as $category) {
+            if ($category->selekted_col == true) {
+                $selectedCategories[] = $category->code_col_name;
+            }
+        }
+
+        $srok = DB::table('CAT_STATION')
+            ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+            ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+            ->where('DATE_CH', '=', $currentDate)
+            ->orderBy('CAT_STATION.OBL_ID', 'asc')
+            ->orderBy('CAT_STATION.IND_ST')
+            ->paginate(16);
+
 
         return view('/site.kode_kn', array(
             'regions' => $regions,
             'stations' => $stations,
-            'categories' => $categories
+            'categories' => $categories,
+            'dataFromSrok' => $srok,
+            'selectedCategories' => $selectedCategories
         ));
     }
 }

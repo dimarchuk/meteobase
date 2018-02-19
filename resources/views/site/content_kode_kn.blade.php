@@ -4,9 +4,9 @@
             <div class="col-md-12">
                 <nav class="my-navbar">
                     <ul>
-                        <li><a href="#">КН-01(строковий)</a></li>
+                        <li><a href="#">КC-01(строковий)</a></li>
                         <li><a href="#">Warep</a></li>
-                        <li><a href="#">КH-01(добовий)</a></li>
+                        <li><a href="#">КC-01(добовий)</a></li>
                         <li><a href="#">Дані за місяць</a></li>
                         <li><a href="#">CLIMAT(Сер. місячні дані)</a></li>
                     </ul>
@@ -17,7 +17,7 @@
         <div class="panel-body">
             <div class="row">
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <form action="/" method="POST">
                         <div class="form-group">
                             <label>Период:</label>
@@ -40,7 +40,7 @@
                                 <label>Назва області:</label>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <select class="form-control" name="regionName[]" id="region-name" size="9"
+                                        <select class="form-control" name="regionName[]" id="region-name" size="6"
                                                 multiple>
                                             @foreach($regions as $key => $region)
                                                 @if($key == 0)
@@ -62,7 +62,7 @@
                                 <label>Назва станції:</label>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <select class="form-control" name="stationName[]" id="station-name" size="9"
+                                        <select class="form-control" name="stationName[]" id="station-name" size="8"
                                                 multiple>
                                             @foreach($stations as $station)
                                                 @php
@@ -100,8 +100,37 @@
                         <button type="submit" class="btn btn-primary" style="width: 150px"> ОК</button>
                     </form>
                 </div>
-                <div class="col-md-8" style="border: 1px solid black; height: 200px">
-                    TABLE
+
+                <div class="col-md-9">
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-striped">
+                            <thead>
+                            <tr>
+                                @foreach($categories as $category)
+                                    @if($category->selekted_col == true)
+                                        @php
+                                            echo "<th>{$category->col_name}</th>"
+                                        @endphp
+                                    @endif
+                                @endforeach
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($dataFromSrok as $item)
+                                <tr>
+                                    @foreach($selectedCategories as $selectedCategory)
+                                        @php
+                                            echo "<td>{$item->$selectedCategory}</td>"
+                                        @endphp
+                                    @endforeach
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    @php
+                        echo $dataFromSrok->links();
+                    @endphp
                 </div>
             </div>
         </div>

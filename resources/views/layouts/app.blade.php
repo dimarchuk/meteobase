@@ -13,6 +13,7 @@
     <!-- Styles -->
     <link type="text/css" href="./css/style.css" rel="stylesheet">
     <link href="./css/app.css" rel="stylesheet">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div id="app">

@@ -33,9 +33,13 @@
 }
 
 .my-navbar ul li a:hover {
-   color: #000000;
+    color: #000000;
 }
 
 .mynavbar ul li a:focus {
     color: #000000;
+}
+
+.table td, .table th {
+    min-width: 125px;
 }
