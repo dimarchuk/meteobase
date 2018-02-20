@@ -34,11 +34,11 @@ $(document).ready(function () {
     /**
      * Select more then one elements
      */
-    jQuery('option').mousedown(function (e) {
+    $('option').mousedown(function (e) {
         e.preventDefault();
-        jQuery(this).toggleClass('selected');
+        $(this).toggleClass('selected');
 
-        jQuery(this).prop('selected', !jQuery(this).prop('selected'));
+        $(this).prop('selected', !$(this).prop('selected'));
         return false;
     });
 });

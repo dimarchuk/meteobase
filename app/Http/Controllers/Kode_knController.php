@@ -43,7 +43,6 @@ class Kode_knController extends Controller
             ->orderBy('CAT_STATION.IND_ST')
             ->paginate(16);
 
-
         return view('/site.kode_kn', array(
             'regions' => $regions,
             'stations' => $stations,
@@ -51,5 +50,59 @@ class Kode_knController extends Controller
             'dataFromSrok' => $srok,
             'selectedCategories' => $selectedCategories
         ));
+    }
+
+    public function ajaxShow(Request $request)
+    {
+
+        if (isset($_POST['form_data'])) {
+            $req = false; // изначально переменная для "ответа" - false
+            parse_str($_POST['form_data'], $form_data); // разбираем строку запроса
+            // Приведём полученную информацию в удобочитаемый вид
+
+            ob_start();
+            echo 'До обработки: ' . $_POST['form_data'];
+            echo 'После обработки:';
+            echo '<pre>';
+            print_r($form_data);
+            echo '</pre>';
+            $req = ob_get_contents();
+            ob_end_clean();
+            return response(json_encode($req), 200); // вернем полученное в ответе
+
+        } else if (isset($_POST['regions_id'])) {
+
+            $request_data = json_decode($_POST['regions_id']);
+
+            if (empty($request_data)) {
+                $stations = DB::table('CAT_STATION')
+                    ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                    ->select('CAT_STATION.IND_ST', 'CAT_STATION.NAME_ST')
+                    ->get();
+
+            } else {
+                $stations = DB::table('CAT_STATION')
+                    ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                    ->select('CAT_STATION.IND_ST', 'CAT_STATION.NAME_ST')
+                    ->whereIn('CAT_OBL.OBL_ID', $request_data)
+                    ->get();
+
+            }
+
+
+            $response_data = json_encode($stations);
+
+
+            return response($response_data, 200);
+        } else {
+            $stations = DB::table('CAT_STATION')
+                ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                ->select('CAT_STATION.IND_ST', 'CAT_STATION.NAME_ST')
+                ->get();
+
+            $c = json_encode($stations);
+
+            return response($c, 200);
+        }
     }
 }

@@ -13,12 +13,11 @@
     <!-- Styles -->
     <link type="text/css" href="./css/style.css" rel="stylesheet">
     <link href="./css/app.css" rel="stylesheet">
-    <link href="./css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div id="app">
     <nav class="navbar navbar-default navbar-static-top">
-        <div class="container">
+        <div class="container-fluid">
             <div class="navbar-header">
 
                 <!-- Collapsed Hamburger -->

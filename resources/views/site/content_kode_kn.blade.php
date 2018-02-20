@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
     <div class="panel panel-defaul">
         <div class="row">
             <div class="col-md-12">
@@ -19,7 +19,7 @@
 
                 <div class="col-md-3">
                     <form action="/" method="POST">
-                        <div class="form-group">
+                        <div id="dates" class="form-group">
                             <label>Период:</label>
                             <div class="row">
                                 <div class="col-sm-1" style="margin-top: 10px;"> З:</div>
@@ -36,11 +36,11 @@
                         </div>
 
                         @if(isset($regions) && is_object($regions))
-                            <div class="form-group">
+                            <div id="regions" class="form-group">
                                 <label>Назва області:</label>
                                 <div class="row">
-                                    <div class="col-sm-12">
-                                        <select class="form-control" name="regionName[]" id="region-name" size="6"
+                                    <div class="col-sm-12 regions-wrapper">
+                                        <select id="regions-select" class="form-control" name="regionName[]" id="region-name" size="6"
                                                 multiple>
                                             @foreach($regions as $key => $region)
                                                 @if($key == 0)
@@ -58,11 +58,11 @@
                         @endif
 
                         @if(isset($stations) && is_object($stations))
-                            <div class="form-group">
+                            <div id="stations" class="form-group">
                                 <label>Назва станції:</label>
                                 <div class="row">
-                                    <div class="col-sm-12">
-                                        <select class="form-control" name="stationName[]" id="station-name" size="8"
+                                    <div class="col-sm-12 sections-wrapper">
+                                        <select id="stations-select" class="form-control" name="stationName[]" id="station-name" size="8"
                                                 multiple>
                                             @foreach($stations as $station)
                                                 @php
@@ -76,7 +76,7 @@
                         @endif
 
                         @if(isset($categories) && is_object($categories))
-                            <div class="form-group">
+                            <div id="categories" class="form-group">
                                 <label>Дані:</label>
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -109,7 +109,7 @@
                                 @foreach($categories as $category)
                                     @if($category->selekted_col == true)
                                         @php
-                                            echo "<th>{$category->col_name}</th>"
+                                            echo "<th>{$category->short_col_name}</th>"
                                         @endphp
                                     @endif
                                 @endforeach
@@ -140,4 +140,4 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script type="text/javascript" src="./js/filters.js"></script>
-<script type="text/javascript" src="./js/magic.js"></script>
+<script type="text/javascript" src="./js/ajaxRequests.js"></script>
