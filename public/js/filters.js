@@ -28,6 +28,7 @@ $(document).ready(function () {
         dateControl.value = date.yyyymmdd();
         dateControl.max = date.yyyymmdd();
     }
+
     setDate(date, 'input[name="dateFrom"]');
     setDate(date, 'input[name="dateTo"]');
 

@@ -14,6 +14,7 @@ class Kode_knController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+
     }
 
     /**
@@ -41,7 +42,7 @@ class Kode_knController extends Controller
             ->where('DATE_CH', '=', $currentDate)
             ->orderBy('CAT_STATION.OBL_ID', 'asc')
             ->orderBy('CAT_STATION.IND_ST')
-            ->paginate(16);
+            ->paginate(17);
 
         return view('/site.kode_kn', array(
             'regions' => $regions,
@@ -78,6 +79,8 @@ class Kode_knController extends Controller
                 $stations = DB::table('CAT_STATION')
                     ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
                     ->select('CAT_STATION.IND_ST', 'CAT_STATION.NAME_ST')
+                    ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                    ->orderBy('CAT_STATION.IND_ST')
                     ->get();
 
             } else {
@@ -85,15 +88,15 @@ class Kode_knController extends Controller
                     ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
                     ->select('CAT_STATION.IND_ST', 'CAT_STATION.NAME_ST')
                     ->whereIn('CAT_OBL.OBL_ID', $request_data)
+                    ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                    ->orderBy('CAT_STATION.IND_ST')
                     ->get();
 
             }
-
-
             $response_data = json_encode($stations);
 
-
             return response($response_data, 200);
+
         } else {
             $stations = DB::table('CAT_STATION')
                 ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
