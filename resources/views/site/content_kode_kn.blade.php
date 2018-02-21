@@ -80,7 +80,7 @@
                                 <label>Дані:</label>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <select class="form-control" name="collumns[]" id="collumns" size="9" multiple>
+                                        <select id="categories-select" class="form-control" name="collumns[]" id="collumns" size="9" multiple>
                                             @foreach($categories as $category)
                                                 @if($category->selekted_col == true)
                                                     @php
@@ -101,8 +101,8 @@
                     </form>
                 </div>
 
-                <div class="col-md-9">
-                    <div class="table-responsive">
+                <div class="col-md-9 main-content">
+                    <div class="table-responsive span3">
                         <table class="table table-condensed table-striped">
                             <thead>
                             <tr>
@@ -128,9 +128,9 @@
                             </tbody>
                         </table>
                     </div>
-                    @php
-                        echo $dataFromSrok->links();
-                    @endphp
+                    {{--@php--}}
+                        {{--echo $dataFromSrok->links();--}}
+                    {{--@endphp--}}
                 </div>
             </div>
         </div>
@@ -138,6 +138,6 @@
 </div>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-<script type="text/javascript" src="./js/filters.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
 <script type="text/javascript" src="./js/ajaxRequests.js"></script>
+<script type="text/javascript" src="./js/filters.js"></script>

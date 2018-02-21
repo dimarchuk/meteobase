@@ -1,4 +1,5 @@
 * {
+    font-family: Montserrat;
     font-size: 14px;
     margin: 0;
     padding: 0;
@@ -41,5 +42,10 @@
 }
 
 .table td, .table th {
-    min-width: 100px;
+    min-width: 110px;
 }
+
+.span3 {
+    height: 668px;
+    overflow: scroll;
+}​

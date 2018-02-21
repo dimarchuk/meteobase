@@ -1,5 +1,6 @@
 $(document).ready(function () {
 
+
     $('#regions').on('click', function (event) {
         event.preventDefault();
         var regions = $('#regions-select').val();
@@ -23,7 +24,7 @@ $(document).ready(function () {
                     size: '8'
                 });
 
-                $.each(json, function () {
+                $.each(json.station, function () {
                     $('<option/>', {
                         val: this.IND_ST,
                         text: this.NAME_ST
@@ -32,6 +33,9 @@ $(document).ready(function () {
 
                 $('.sections-wrapper').append(select);
 
+               gir
+
+
                 if (json) {
                     console.log(json);
                 } else console.log('NO!');
@@ -39,6 +43,7 @@ $(document).ready(function () {
             }
         });
     });
+
 
     $('form').submit(function (event) {
         event.preventDefault();
@@ -51,14 +56,20 @@ $(document).ready(function () {
             type: $that.attr('method'),
             url: $that.attr('action'),
             data: {form_data: fData},
-            dataType: 'json',
-            success: function (json) {
+            dataType: 'html',
+            success: function (view) {
 
-                if (json) {
-                    console.log(json);
+                $('.table-responsive').remove();
+
+                $('.main-content').html(view);
+                if (view) {
+                    console.log(view);
                 } else console.log('NO!');
 
             }
         });
     });
+
+
+
 });
