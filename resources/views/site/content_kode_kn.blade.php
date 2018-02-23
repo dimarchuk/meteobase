@@ -102,7 +102,7 @@
                 </div>
 
                 <div class="col-md-9 main-content">
-                    <div class="table-responsive span3">
+                    <div class="table-responsive">
                         <table class="table table-condensed table-striped">
                             <thead>
                             <tr>
@@ -128,9 +128,9 @@
                             </tbody>
                         </table>
                     </div>
-                    {{--@php--}}
-                        {{--echo $dataFromSrok->links();--}}
-                    {{--@endphp--}}
+                    @php
+                        echo $dataFromSrok->links();
+                    @endphp
                 </div>
             </div>
         </div>

@@ -1,16 +1,3 @@
-/**
- * Select more then one elements
- */
-function multiSelect(id) {
-    $(id + '>option').mousedown(function (e) {
-        e.preventDefault();
-        $(this).toggleClass('selected');
-
-        $(this).prop('selected', !$(this).prop('selected'));
-        return false;
-    });
-}
-
 $(document).ready(function () {
 
     /**
@@ -45,7 +32,20 @@ $(document).ready(function () {
     setDate(date, 'input[name="dateFrom"]');
     setDate(date, 'input[name="dateTo"]');
 
-    // multiSelect('#regions-select');
-    // multiSelect('#stations-select');
-    // multiSelect('#categories-select');
+    multiSelect('#regions-select');
+    multiSelect('#stations-select');
+    multiSelect('#categories-select');
 });
+
+/**
+ * Select more then one elements
+ */
+function multiSelect(id) {
+    $(id + '>option').mousedown(function (e) {
+        e.preventDefault();
+        $(this).toggleClass('selected');
+
+        $(this).prop('selected', !$(this).prop('selected'));
+        return false;
+    });
+}

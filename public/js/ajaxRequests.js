@@ -2,15 +2,14 @@ $(document).ready(function () {
 
 
     $('#regions').on('click', function (event) {
-        event.preventDefault();
-        var regions = $('#regions-select').val();
-        var regions_json = JSON.stringify(regions);
+        // event.preventDefault();
+        var regions_serialize = $('#regions-select').serialize() + "&requestName=selectStation";
 
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             type: 'POST',
             url: '/',
-            data: {regions_id: regions_json},
+            data: {data: regions_serialize},
             dataType: 'json',
             success: function (json) {
 
@@ -33,12 +32,7 @@ $(document).ready(function () {
 
                 $('.sections-wrapper').append(select);
 
-               gir
-
-
-                if (json) {
-                    console.log(json);
-                } else console.log('NO!');
+                multiSelect('#stations-select');
 
             }
         });
@@ -48,28 +42,51 @@ $(document).ready(function () {
     $('form').submit(function (event) {
         event.preventDefault();
         var $that = $(this),
-            fData = $that.serialize();
+            fData = $that.serialize() + "&requestName=selectInfoForTable";
 
 
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             type: $that.attr('method'),
             url: $that.attr('action'),
-            data: {form_data: fData},
+            data: {data: fData},
             dataType: 'html',
             success: function (view) {
 
                 $('.table-responsive').remove();
 
                 $('.main-content').html(view);
-                if (view) {
-                    console.log(view);
-                } else console.log('NO!');
+
+                $(document).on('click', '.pagination a', function (e) {
+                    var currentPage = $(this).attr('href').split('page=')[1];
+                    getSelectedPage(currentPage);
+                    e.preventDefault();
+                });
 
             }
         });
     });
 
 
-
 });
+
+function getSelectedPage(page) {
+
+    var fData = $('form').serialize() + "&requestName=selectInfoForTable" + "&page=" + page;
+
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'POST',
+        url: '/',
+        data: {data: fData},
+        dataType: 'html',
+    }).done(function (view) {
+
+        $('.table-responsive').remove();
+
+        $('.main-content').html(view);
+
+    }).fail(function () {
+        alert('Posts could not be loaded.');
+    });
+}

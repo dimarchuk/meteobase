@@ -13,10 +13,9 @@
 
 Route::get('/', ['uses' => 'Kode_knController@show', 'as' => 'home']);
 
-Route::post('/', ['uses' => 'Kode_knController@ajaxShow']);
+Route::post('/', ['uses' => 'Kode_knController@getDataKodeKN']);
 
 Route::auth();
-//Auth::routes();
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
 

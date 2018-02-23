@@ -14,8 +14,10 @@ class Kode_knController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        define("PER_PAGE", 3);
 
     }
+
 
     /**
      * @param Request $request
@@ -43,8 +45,8 @@ class Kode_knController extends Controller
             ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
             ->orderBy('CAT_STATION.OBL_ID', 'asc')
             ->orderBy('CAT_STATION.IND_ST')
-            ->where('DATE_CH', '=', $currentDate)->get();
-//            ->paginate(17);
+            ->where('DATE_CH', '=', $currentDate)
+            ->paginate(17);
 
         return view('/site.kode_kn', array(
             'regions' => $regions,
@@ -55,64 +57,80 @@ class Kode_knController extends Controller
         ));
     }
 
+
     /**
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
-    public function ajaxShow(Request $request)
+    public function getDataKodeKN(Request $request)
     {
         $currentDate = date('Y-m-d');
-        if (isset($_POST['form_data'])) {
+        parse_str($_POST['data'], $data);
+        $ajaxIdentification = $data['requestName'];
 
-            parse_str($_POST['form_data'], $form_data);
-            $categories = Category::all()->whereIn('code_col_name', $form_data['collumns']);
+        switch ($ajaxIdentification) {
+            case "selectStation":
 
+                if (empty($data['regionName'])) {
 
-            $srok = DB::table('CAT_STATION')
-                ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
-                ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
-                ->where('DATE_CH', '=', $currentDate)
-                ->whereIn('CAT_OBL.OBL_ID', $form_data['regionName'])
-                ->whereIn('CAT_STATION.IND_ST', $form_data['stationName'])
-                ->orderBy('CAT_STATION.OBL_ID', 'asc')
-                ->orderBy('CAT_STATION.IND_ST')->get();
-//                ->paginate(17);
+                    $stations = DB::table('CAT_STATION')
+                        ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                        ->select('CAT_STATION.IND_ST', 'CAT_STATION.NAME_ST')
+                        ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                        ->orderBy('CAT_STATION.IND_ST')
+                        ->get();
 
+                } else {
 
-            return view('site.table', array(
-                'categories' => $categories,
-                'dataFromSrok' => $srok,
-            ));
+                    $stations = DB::table('CAT_STATION')
+                        ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                        ->select('CAT_STATION.IND_ST', 'CAT_STATION.NAME_ST')
+                        ->whereIn('CAT_OBL.OBL_ID', $data['regionName'])
+                        ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                        ->orderBy('CAT_STATION.IND_ST')
+                        ->get();
+                }
 
-        } else if (isset($_POST['regions_id'])) {
+                $data = [
+                    'station' => $stations
+                ];
 
-            $request_data = json_decode($_POST['regions_id']);
+                $response_data = json_encode($data);
 
-            if (empty($request_data)) {
-                $stations = DB::table('CAT_STATION')
+                return response($response_data, 200);
+                break;
+
+            case "selectInfoForTable":
+
+                $categories = Category::all()->whereIn('code_col_name', $data['collumns']);
+
+                $dataFromTableSrok = DB::table('CAT_STATION')
                     ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
-                    ->select('CAT_STATION.IND_ST', 'CAT_STATION.NAME_ST')
+                    ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+                    ->where('DATE_CH', '=', $currentDate)
+                    ->whereIn('CAT_OBL.OBL_ID', $data['regionName'])
+                    ->whereIn('CAT_STATION.IND_ST', $data['stationName'])
                     ->orderBy('CAT_STATION.OBL_ID', 'asc')
                     ->orderBy('CAT_STATION.IND_ST')
                     ->get();
 
-            } else {
-                $stations = DB::table('CAT_STATION')
-                    ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
-                    ->select('CAT_STATION.IND_ST', 'CAT_STATION.NAME_ST')
-                    ->whereIn('CAT_OBL.OBL_ID', $request_data)
-                    ->orderBy('CAT_STATION.OBL_ID', 'asc')
-                    ->orderBy('CAT_STATION.IND_ST')
-                    ->get();
-            }
+                if (isset($data['page'])) {
+                    $currentPage = $data['page'];
+                } else {
+                    $currentPage = 1;
+                }
 
-            $data = [
-                'station' => $stations,
-            ];
+                $srok = $dataFromTableSrok->forPage($currentPage, PER_PAGE);
 
-            $response_data = json_encode($data);
+                $countPages = ceil($dataFromTableSrok->count() / PER_PAGE);
 
-            return response($response_data, 200);
+                return view('site.table', array(
+                    'categories' => $categories,
+                    'dataFromSrok' => $srok,
+                    'countPages' => $countPages,
+                    'currentPage' => $currentPage
+                ));
+                break;
         }
     }
 }
