@@ -18,7 +18,7 @@
             <div class="row">
 
                 <div class="col-md-3">
-                    <form action="/" method="POST">
+                    <form action="{!! url('/') !!}" method="POST">
                         <div id="dates" class="form-group">
                             <label>Период:</label>
                             <div class="row">

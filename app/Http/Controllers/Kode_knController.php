@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use App\Helpers\{
+    Helper
+};
 use App\Category;
+
 
 class Kode_knController extends Controller
 {
@@ -14,10 +18,9 @@ class Kode_knController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        define("PER_PAGE", 3);
+        define("PER_PAGE", 17);
 
     }
-
 
     /**
      * @param Request $request
@@ -25,7 +28,6 @@ class Kode_knController extends Controller
      */
     public function show(Request $request)
     {
-
         $currentDate = date('Y-m-d');
 
 
@@ -56,7 +58,6 @@ class Kode_knController extends Controller
             'selectedCategories' => $selectedCategories
         ));
     }
-
 
     /**
      * @param Request $request
@@ -91,6 +92,7 @@ class Kode_knController extends Controller
                         ->get();
                 }
 
+
                 $data = [
                     'station' => $stations
                 ];
@@ -109,7 +111,7 @@ class Kode_knController extends Controller
                     ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
                     ->where('DATE_CH', '=', $currentDate)
                     ->whereIn('CAT_OBL.OBL_ID', $data['regionName'])
-                    ->whereIn('CAT_STATION.IND_ST', $data['stationName'])
+//                    ->whereIn('CAT_STATION.IND_ST', $data['stationName'])
                     ->orderBy('CAT_STATION.OBL_ID', 'asc')
                     ->orderBy('CAT_STATION.IND_ST')
                     ->get();
@@ -124,11 +126,16 @@ class Kode_knController extends Controller
 
                 $countPages = ceil($dataFromTableSrok->count() / PER_PAGE);
 
+                $a = new Helper();
+                $b = $a->generateLinksForPagination('', $countPages, $currentPage, true);
+
+
                 return view('site.table', array(
                     'categories' => $categories,
                     'dataFromSrok' => $srok,
                     'countPages' => $countPages,
-                    'currentPage' => $currentPage
+                    'currentPage' => $currentPage,
+                    'b' => $b
                 ));
                 break;
         }

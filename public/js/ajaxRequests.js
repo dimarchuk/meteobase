@@ -1,6 +1,5 @@
 $(document).ready(function () {
 
-
     $('#regions').on('click', function (event) {
         // event.preventDefault();
         var regions_serialize = $('#regions-select').serialize() + "&requestName=selectStation";
@@ -57,10 +56,10 @@ $(document).ready(function () {
 
                 $('.main-content').html(view);
 
-                $(document).on('click', '.pagination a', function (e) {
+                $(document).on('click', '.pagination a', function (event) {
                     var currentPage = $(this).attr('href').split('page=')[1];
                     getSelectedPage(currentPage);
-                    e.preventDefault();
+                    event.preventDefault();
                 });
 
             }
