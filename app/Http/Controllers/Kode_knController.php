@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DB;
-use App\Helpers\{
-    Helper
-};
+use App\Helpers\Helper;
 use App\{
     Category,
     Region,
@@ -24,7 +21,6 @@ class Kode_knController extends Controller
     {
         $this->middleware('auth');
         define("PER_PAGE", 17);
-
     }
 
     /**
@@ -51,13 +47,21 @@ class Kode_knController extends Controller
         } else {
             $currentPage = 1;
         }
-
+        /**
+         * Get data for table on one page
+         */
         $dataFromTableSrok = $srok->getBasicDataFromSrok();
         $srokOnePage = $dataFromTableSrok->forPage($currentPage, PER_PAGE);
 
+        /**
+         * Create pagination links
+         */
         $countPages = ceil($dataFromTableSrok->count() / PER_PAGE);
         $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
 
+        /**
+         * array with all data for view
+         */
         $data = [
             'regions' => $regions->getRegions(),
             'stations' => $stations->getAllStation(),
@@ -70,6 +74,7 @@ class Kode_knController extends Controller
         return view('/site.kode_kn', $data);
     }
 
+
     /**
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
@@ -79,7 +84,7 @@ class Kode_knController extends Controller
         $helper = new Helper();
         $stations = new Station();
         $srok = new Srok();
-        
+
         parse_str($_POST['data'], $data);
         $ajaxIdentification = $data['requestName'];
 
@@ -115,13 +120,13 @@ class Kode_knController extends Controller
                         $currentPage = 1;
                     }
 
-                    $srok = $dataFromTableSrokk->forPage($currentPage, PER_PAGE);
+                    $srokOnePage = $dataFromTableSrokk->forPage($currentPage, PER_PAGE);
                     $countPages = ceil($dataFromTableSrokk->count() / PER_PAGE);
                     $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
 
                     $data = [
                         'categories' => $categories,
-                        'dataFromSrok' => $srok,
+                        'dataFromSrok' => $srokOnePage,
                         'countPages' => $countPages,
                         'currentPage' => $currentPage,
                         'paginationLinks' => $paginationLinks,

@@ -22,8 +22,8 @@ class Srok extends Model
             ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
             ->orderBy('CAT_STATION.OBL_ID', 'asc')
             ->orderBy('CAT_STATION.IND_ST')
-            ->where('DATE_CH', '=', $this->currentDate)->get();//var $currentDate
-//            ->paginate(17);
+            ->where('DATE_CH', '=', $this->currentDate)//var $currentDate
+            ->get();
 
         return $srok;
     }
