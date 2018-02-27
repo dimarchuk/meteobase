@@ -40,7 +40,8 @@
                                 <label>Назва області:</label>
                                 <div class="row">
                                     <div class="col-sm-12 regions-wrapper">
-                                        <select id="regions-select" class="form-control" name="regionName[]" id="region-name" size="6"
+                                        <select id="regions-select" class="form-control" name="regionName[]"
+                                                id="region-name" size="6"
                                                 multiple>
                                             @foreach($regions as $key => $region)
                                                 @if($key == 0)
@@ -62,7 +63,8 @@
                                 <label>Назва станції:</label>
                                 <div class="row">
                                     <div class="col-sm-12 sections-wrapper">
-                                        <select id="stations-select" class="form-control" name="stationName[]" id="station-name" size="8"
+                                        <select id="stations-select" class="form-control" name="stationName[]"
+                                                id="station-name" size="8"
                                                 multiple>
                                             @foreach($stations as $station)
                                                 @php
@@ -80,7 +82,8 @@
                                 <label>Дані:</label>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <select id="categories-select" class="form-control" name="collumns[]" id="collumns" size="9" multiple>
+                                        <select id="categories-select" class="form-control" name="collumns[]"
+                                                id="collumns" size="9" multiple>
                                             @foreach($categories as $category)
                                                 @if($category->selekted_col == true)
                                                     @php

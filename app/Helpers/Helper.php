@@ -4,7 +4,16 @@ namespace App\Helpers;
 
 class Helper
 {
-    public function generateLinksForPagination($url, $countPages, $currentPage = 1, $extra = false)
+    /**
+     * Create links for pagination
+     *
+     * @param string $url
+     * @param int $countPages
+     * @param int $currentPage
+     * @param bool $extra
+     * @return string
+     */
+    public static function generateLinksForPagination(string $url, int $countPages, $currentPage = 1, $showArrows = false)
     {
         $j = 1 + ($currentPage < 2 || ($currentPage > $countPages - 3) ? 0 : $currentPage - 2 - ($currentPage == $countPages - 3));
 
@@ -23,7 +32,7 @@ class Helper
             } else $result[] = '<li><a href="' . $url . '?page=' . $k . '">' . $k . '</a></li>';
         }
 
-        if ($extra) {
+        if ($showArrows) {
             array_unshift($result, '<li><a' . ($currentPage != 1 ? ' href="' . $url . '?page=' . ($currentPage - 1) . '"' : '') . ' title="Предыдущая страница">«</a></li>');
             $result[] = '<li><a' . ($currentPage != $countPages ? ' href="' . $url . '?page=' . ($currentPage + 1) . '"' : '') . ' title="Следующая страница">»</a></li>';
         }

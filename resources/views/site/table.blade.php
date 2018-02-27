@@ -23,10 +23,10 @@
         </tbody>
     </table>
 </div>
-gi
+
 <ul class="pagination">
-@php
-    echo $b;
-@endphp
+    @php
+        echo $paginationLinks;
+    @endphp
 </ul>
 
