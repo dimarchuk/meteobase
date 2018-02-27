@@ -131,9 +131,11 @@
                             </tbody>
                         </table>
                     </div>
-                    @php
-                        echo $dataFromSrok->links();
-                    @endphp
+                    <ul class="pagination">
+                        @php
+                            echo $paginationLinks;
+                        @endphp
+                    </ul>
                 </div>
             </div>
         </div>

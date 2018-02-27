@@ -29,4 +29,3 @@
         echo $paginationLinks;
     @endphp
 </ul>
-

@@ -10,7 +10,8 @@ use App\Helpers\{
 use App\{
     Category,
     Region,
-    Station
+    Station,
+    Srok
 };
 
 
@@ -32,11 +33,11 @@ class Kode_knController extends Controller
      */
     public function show(Request $request)
     {
-        $currentDate = date('Y-m-d');
-
+        $helper = new Helper();
         $regions = new Region();
         $stations = new Station();
         $categories = Category::all();
+        $srok = new Srok();
 
         $selectedCategories = [];
         foreach ($categories as $category) {
@@ -45,21 +46,28 @@ class Kode_knController extends Controller
             }
         }
 
-        $srok = DB::table('CAT_STATION')
-            ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
-            ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
-            ->orderBy('CAT_STATION.OBL_ID', 'asc')
-            ->orderBy('CAT_STATION.IND_ST')
-            ->where('DATE_CH', '=', '2018-02-25')//var $currentDate
-            ->paginate(17);
+        if (isset($_GET['page'])) {
+            $currentPage = $_GET['page'];
+        } else {
+            $currentPage = 1;
+        }
 
-        return view('/site.kode_kn', array(
+        $dataFromTableSrok = $srok->getBasicDataFromSrok();
+        $srokOnePage = $dataFromTableSrok->forPage($currentPage, PER_PAGE);
+
+        $countPages = ceil($dataFromTableSrok->count() / PER_PAGE);
+        $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
+
+        $data = [
             'regions' => $regions->getRegions(),
-            'stations' => $stations->getStation(),
+            'stations' => $stations->getAllStation(),
             'categories' => $categories,
-            'dataFromSrok' => $srok,
-            'selectedCategories' => $selectedCategories
-        ));
+            'dataFromSrok' => $srokOnePage,
+            'selectedCategories' => $selectedCategories,
+            'paginationLinks' => $paginationLinks
+        ];
+
+        return view('/site.kode_kn', $data);
     }
 
     /**
@@ -69,33 +77,20 @@ class Kode_knController extends Controller
     public function getDataKodeKN(Request $request)
     {
         $helper = new Helper();
-
-        $currentDate = date('Y-m-d');
+        $stations = new Station();
+        $srok = new Srok();
+        
         parse_str($_POST['data'], $data);
         $ajaxIdentification = $data['requestName'];
 
         switch ($ajaxIdentification) {
             case "selectStation":
                 {
-
                     if (empty($data['regionName'])) {
-
-                        $stations = DB::table('CAT_STATION')
-                            ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
-                            ->select('CAT_STATION.IND_ST', 'CAT_STATION.NAME_ST')
-                            ->orderBy('CAT_STATION.OBL_ID', 'asc')
-                            ->orderBy('CAT_STATION.IND_ST')
-                            ->get();
-
+                        $stations = $stations->getAllStation();
                     } else {
-
-                        $stations = DB::table('CAT_STATION')
-                            ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
-                            ->select('CAT_STATION.IND_ST', 'CAT_STATION.NAME_ST')
-                            ->whereIn('CAT_OBL.OBL_ID', $data['regionName'])
-                            ->orderBy('CAT_STATION.OBL_ID', 'asc')
-                            ->orderBy('CAT_STATION.IND_ST')
-                            ->get();
+                        $stations->regionName = $data['regionName'];
+                        $stations = $stations->filterStation();
                     }
 
                     $data = [
@@ -103,25 +98,16 @@ class Kode_knController extends Controller
                     ];
 
                     $response_data = json_encode($data);
-
                     return response($response_data, 200);
                     break;
                 }
 
             case "selectInfoForTable":
                 {
-
                     $categories = Category::all()->whereIn('code_col_name', $data['collumns']);
 
-                    $dataFromTableSrok = DB::table('CAT_STATION')
-                        ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
-                        ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
-                        ->where('DATE_CH', '=', $currentDate)
-                        ->whereIn('CAT_OBL.OBL_ID', $data['regionName'])
-//                    ->whereIn('CAT_STATION.IND_ST', $data['stationName'])
-                        ->orderBy('CAT_STATION.OBL_ID', 'asc')
-                        ->orderBy('CAT_STATION.IND_ST')
-                        ->get();
+                    $dataFromTableSrok = $srok->getBasicDataFromSrok();
+                    $dataFromTableSrokk = $dataFromTableSrok->whereIn('OBL_ID', $data['regionName']);
 
                     if (isset($data['page'])) {
                         $currentPage = $data['page'];
@@ -129,10 +115,8 @@ class Kode_knController extends Controller
                         $currentPage = 1;
                     }
 
-                    $srok = $dataFromTableSrok->forPage($currentPage, PER_PAGE);
-
-                    $countPages = ceil($dataFromTableSrok->count() / PER_PAGE);
-
+                    $srok = $dataFromTableSrokk->forPage($currentPage, PER_PAGE);
+                    $countPages = ceil($dataFromTableSrokk->count() / PER_PAGE);
                     $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
 
                     $data = [
@@ -140,7 +124,7 @@ class Kode_knController extends Controller
                         'dataFromSrok' => $srok,
                         'countPages' => $countPages,
                         'currentPage' => $currentPage,
-                        'paginationLinks' => $paginationLinks
+                        'paginationLinks' => $paginationLinks,
                     ];
 
                     return view('site.table', $data);
