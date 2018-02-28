@@ -10,7 +10,9 @@ use App\{
     Station,
     Srok
 };
+use Symfony\Component\VarDumper\Caster\DateCaster;
 
+use DB;
 
 class Kode_knController extends Controller
 {
@@ -33,30 +35,30 @@ class Kode_knController extends Controller
         $regions = new Region();
         $stations = new Station();
         $categories = Category::all();
-        $srok = new Srok();
+
+        $currentDate = Date('Y-m-d');
+        $srok = new Srok([$currentDate, $currentDate]);
 
         $selectedCategories = [];
         foreach ($categories as $category) {
             if ($category->selekted_col == true) {
                 $selectedCategories[] = $category->code_col_name;
             }
+
         }
 
-        if (isset($_GET['page'])) {
-            $currentPage = $_GET['page'];
-        } else {
-            $currentPage = 1;
-        }
+        $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+
         /**
          * Get data for table on one page
          */
-        $dataFromTableSrok = $srok->getBasicDataFromSrok();
-        $srokOnePage = $dataFromTableSrok->forPage($currentPage, PER_PAGE);
-
+        $dataFromTableSrok = $srok->getBasicDataFromSrok($currentPage);
+//        $srokOnePage = $dataFromTableSrok->forPage($currentPage, PER_PAGE);
         /**
          * Create pagination links
          */
-        $countPages = ceil($dataFromTableSrok->count() / PER_PAGE);
+//        $countPages = $srok->getCountStr();
+        $countPages = ceil($srok->getCountStr() / PER_PAGE);
         $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
 
         /**
@@ -66,7 +68,7 @@ class Kode_knController extends Controller
             'regions' => $regions->getRegions(),
             'stations' => $stations->getAllStation(),
             'categories' => $categories,
-            'dataFromSrok' => $srokOnePage,
+            'dataFromSrok' => $dataFromTableSrok,
             'selectedCategories' => $selectedCategories,
             'paginationLinks' => $paginationLinks
         ];
@@ -83,10 +85,11 @@ class Kode_knController extends Controller
     {
         $helper = new Helper();
         $stations = new Station();
-        $srok = new Srok();
 
         parse_str($_POST['data'], $data);
+
         $ajaxIdentification = $data['requestName'];
+
 
         switch ($ajaxIdentification) {
             case "selectStation":
@@ -109,22 +112,40 @@ class Kode_knController extends Controller
 
             case "selectInfoForTable":
                 {
+                    $srok = new Srok([$data['dateFrom'], $data['dateTo']]);
                     $categories = Category::all()->whereIn('code_col_name', $data['collumns']);
-
                     $dataFromTableSrok = $srok->getBasicDataFromSrok();
-                    $dataFromTableSrokk = $dataFromTableSrok->whereIn('OBL_ID', $data['regionName']);
 
-                    if (isset($data['page'])) {
-                        $currentPage = $data['page'];
-                    } else {
-                        $currentPage = 1;
+                    if (isset($data['regionName']) && empty($data['stationName'])) {
+
+                        $dataFromTableSrokk = $dataFromTableSrok
+                            ->whereIn('OBL_ID', $data['regionName']);
+
+                    } else if (isset($data['regionName']) && isset($data['stationName'])) {
+
+                        $dataFromTableSrokk = $dataFromTableSrok
+                            ->whereIn('OBL_ID', $data['regionName'])
+                            ->whereIn('IND_ST', $data['stationName']);
+
+                    } else if (empty($data['regionName']) && isset($data['stationName'])) {
+
+                        $dataFromTableSrokk = $dataFromTableSrok
+                            ->whereIn('IND_ST', $data['stationName']);
+
+                    } else if (empty($data['regionName']) && empty($data['stationName'])) {
+
+                        $dataFromTableSrokk = $dataFromTableSrok;
+
                     }
+
+                    $currentPage = isset($data['page']) ? $data['page'] : 1;
 
                     $srokOnePage = $dataFromTableSrokk->forPage($currentPage, PER_PAGE);
                     $countPages = ceil($dataFromTableSrokk->count() / PER_PAGE);
-                    $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
 
-                    $data = [
+                    $paginationLinks = $countPages >= 1 ? $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true) : "";
+
+                    $dataOut = [
                         'categories' => $categories,
                         'dataFromSrok' => $srokOnePage,
                         'countPages' => $countPages,
@@ -132,7 +153,7 @@ class Kode_knController extends Controller
                         'paginationLinks' => $paginationLinks,
                     ];
 
-                    return view('site.table', $data);
+                    return view('site.table', $dataOut);
                     break;
                 }
         }

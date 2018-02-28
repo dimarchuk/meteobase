@@ -135,9 +135,10 @@
                         @php
                             echo $paginationLinks;
                         @endphp
+
                     </ul>
                 </div>
-            </div>
+
         </div>
     </div>
 </div>

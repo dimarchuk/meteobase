@@ -8,21 +8,32 @@ use DB;
 class Srok extends Model
 {
     protected $table = 'srok';
-    protected $currentDate;
+    protected $date;
 
-    public function __construct()
+    public function __construct($date)
     {
-        $this->currentDate = date('Y-m-d');
+        $this->date = $date;
     }
+     function getCountStr() {
+         $count = DB::table('CAT_STATION')
+             ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+             ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+             ->orderBy('CAT_STATION.OBL_ID', 'asc')
+             ->orderBy('CAT_STATION.IND_ST')
+             ->whereBetween('DATE_CH', $this->date)
+             ->count();
 
-    public function getBasicDataFromSrok()
+         return $count;
+     }
+
+    public function getBasicDataFromSrok($page)
     {
         $srok = DB::table('CAT_STATION')
             ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
             ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
             ->orderBy('CAT_STATION.OBL_ID', 'asc')
             ->orderBy('CAT_STATION.IND_ST')
-            ->where('DATE_CH', '=', $this->currentDate)//var $currentDate
+            ->whereBetween('DATE_CH', $this->date)->forPage($page,17)
             ->get();
 
         return $srok;

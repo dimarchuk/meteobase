@@ -4,6 +4,7 @@ $(document).ready(function () {
         // event.preventDefault();
         var regions_serialize = $('#regions-select').serialize() + "&requestName=selectStation";
 
+
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             type: 'POST',
@@ -42,7 +43,7 @@ $(document).ready(function () {
         var $that = $(this),
             fData = $that.serialize() + "&requestName=selectInfoForTable";
 
-
+        $('.table-responsive').remove();
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             type: $that.attr('method'),
@@ -51,7 +52,7 @@ $(document).ready(function () {
             dataType: 'html',
             success: function (view) {
 
-                $('.table-responsive').remove();
+
 
                 $('.main-content').html(view);
 
@@ -61,7 +62,7 @@ $(document).ready(function () {
                     event.preventDefault();
                 });
 
-            }
+            },
         });
     });
 

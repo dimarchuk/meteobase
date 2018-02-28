@@ -18,7 +18,11 @@ class Station extends Model
 
     public function getAllStation()
     {
-        return DB::table('CAT_STATION')->select('IND_ST', 'NAME_ST')->get();
+        return DB::table('CAT_STATION')
+            ->select('IND_ST', 'NAME_ST')
+            ->orderBy('OBL_ID')
+            ->orderBy('IND_ST')
+            ->get();
     }
 
     public function filterStation()
