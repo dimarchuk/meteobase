@@ -115,10 +115,15 @@ class Kode_knController extends Controller
                      * Save selected filters
                      */
                     $uId = \Auth::getUser()->getAuthIdentifier();
-
-                    DB::table('user_categories')->where('user_id', $uId)->update(
-                        ['categories_list' => $_POST['data']]
-                    );
+                    if (DB::table('user_categories')->where('user_id', $uId)->exists()) {
+                        DB::table('user_categories')->where('user_id', $uId)->update(
+                            ['categories_list' => $_POST['data']]
+                        );
+                    } else {
+                        DB::table('user_categories')->where('user_id', $uId)->insert(
+                            ['user_id' => $uId, 'categories_list' => $_POST['data']]
+                        );
+                    }
 
                     /**
                      * Data filtering
