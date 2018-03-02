@@ -13,7 +13,7 @@ class Helper
      * @param bool $extra
      * @return string
      */
-    public static function generateLinksForPagination(string $url, int $countPages, $currentPage = 1, $showArrows = false)
+    public static  function generateLinksForPagination(string $url, int $countPages, $currentPage = 1, $showArrows = false)
     {
         $j = 1 + ($currentPage < 2 || ($currentPage > $countPages - 3) ? 0 : $currentPage - 2 - ($currentPage == $countPages - 3));
 

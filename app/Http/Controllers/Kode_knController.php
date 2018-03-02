@@ -44,7 +44,6 @@ class Kode_knController extends Controller
             if ($category->selekted_col == true) {
                 $selectedCategories[] = $category->code_col_name;
             }
-
         }
 
         $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
@@ -52,14 +51,14 @@ class Kode_knController extends Controller
         /**
          * Get data for table on one page
          */
-        $dataFromTableSrok = $srok->getBasicDataFromSrok($currentPage);
-//        $srokOnePage = $dataFromTableSrok->forPage($currentPage, PER_PAGE);
+        $dataFromTableSrok = $srok->getBasicData($currentPage);
+
         /**
          * Create pagination links
          */
-//        $countPages = $srok->getCountStr();
-        $countPages = ceil($srok->getCountStr() / PER_PAGE);
+        $countPages = ceil($srok->getCountStrBasic() / PER_PAGE);
         $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
+
 
         /**
          * array with all data for view
@@ -112,42 +111,38 @@ class Kode_knController extends Controller
 
             case "selectInfoForTable":
                 {
+                    $currentPage = isset($data['page']) ? $data['page'] : 1;
                     $srok = new Srok([$data['dateFrom'], $data['dateTo']]);
                     $categories = Category::all()->whereIn('code_col_name', $data['collumns']);
-                    $dataFromTableSrok = $srok->getBasicDataFromSrok();
 
                     if (isset($data['regionName']) && empty($data['stationName'])) {
 
-                        $dataFromTableSrokk = $dataFromTableSrok
-                            ->whereIn('OBL_ID', $data['regionName']);
+                        $countStr = $srok->getCountStrRegion($data['regionName']);
+                        $dataForTable = $srok->getRegionData($data['regionName'], $currentPage);
 
                     } else if (isset($data['regionName']) && isset($data['stationName'])) {
 
-                        $dataFromTableSrokk = $dataFromTableSrok
-                            ->whereIn('OBL_ID', $data['regionName'])
-                            ->whereIn('IND_ST', $data['stationName']);
+                        $countStr = $srok->getCountStrRegionStation($data['regionName'], $data['stationName']);
+                        $dataForTable = $srok->getRegionStationData($data['regionName'], $data['stationName'], $currentPage);
 
                     } else if (empty($data['regionName']) && isset($data['stationName'])) {
 
-                        $dataFromTableSrokk = $dataFromTableSrok
-                            ->whereIn('IND_ST', $data['stationName']);
+                        $countStr = $srok->getCountStrStation($data['stationName']);
+                        $dataForTable = $srok->getStationData($data['stationName'], $currentPage);
 
                     } else if (empty($data['regionName']) && empty($data['stationName'])) {
 
-                        $dataFromTableSrokk = $dataFromTableSrok;
-
+                        $countStr = $srok->getCountStrBasic();
+                        $dataForTable = $srok->getBasicData($currentPage);
                     }
 
-                    $currentPage = isset($data['page']) ? $data['page'] : 1;
+                    $countPages = ceil($countStr / PER_PAGE);
 
-                    $srokOnePage = $dataFromTableSrokk->forPage($currentPage, PER_PAGE);
-                    $countPages = ceil($dataFromTableSrokk->count() / PER_PAGE);
-
-                    $paginationLinks = $countPages >= 1 ? $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true) : "";
+                    $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true) : "";
 
                     $dataOut = [
                         'categories' => $categories,
-                        'dataFromSrok' => $srokOnePage,
+                        'dataFromSrok' => $dataForTable,
                         'countPages' => $countPages,
                         'currentPage' => $currentPage,
                         'paginationLinks' => $paginationLinks,
