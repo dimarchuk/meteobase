@@ -5,13 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Helpers\Helper;
 use App\{
-    Category,
-    Region,
-    Station,
-    Srok
+    Category, Region, Station, Srok, User
 };
 use Symfony\Component\VarDumper\Caster\DateCaster;
-
 use DB;
 
 class Kode_knController extends Controller
@@ -58,7 +54,6 @@ class Kode_knController extends Controller
          */
         $countPages = ceil($srok->getCountStrBasic() / PER_PAGE);
         $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
-
 
         /**
          * array with all data for view
@@ -116,6 +111,18 @@ class Kode_knController extends Controller
                     $categories = Category::all()->whereIn('code_col_name', $data['collumns']);
                     $strok = ($data['srok'] == 'All') ? [0, 3, 6, 9, 12, 15, 18, 21] : [(int)$data['srok']];
 
+                    /**
+                     * Save selected filters
+                     */
+                    $uId = \Auth::getUser()->getAuthIdentifier();
+
+                    DB::table('user_categories')->where('user_id', $uId)->update(
+                        ['categories_list' => $_POST['data']]
+                    );
+
+                    /**
+                     * Data filtering
+                     */
                     if (isset($data['regionName']) && empty($data['stationName'])) {
 
                         $countStr = $srok->getCountStrRegion($data['regionName'], $strok);
