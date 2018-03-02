@@ -13,7 +13,7 @@ class Helper
      * @param bool $extra
      * @return string
      */
-    public static  function generateLinksForPagination(string $url, int $countPages, $currentPage = 1, $showArrows = false)
+    public static function generateLinksForPagination(string $url, int $countPages, $currentPage = 1, $showArrows = false)
     {
         $j = 1 + ($currentPage < 2 || ($currentPage > $countPages - 3) ? 0 : $currentPage - 2 - ($currentPage == $countPages - 3));
 
@@ -33,8 +33,8 @@ class Helper
         }
 
         if ($showArrows) {
-            array_unshift($result, '<li><a' . ($currentPage != 1 ? ' href="' . $url . '?page=' . ($currentPage - 1) . '"' : '') . ' title="Предыдущая страница">«</a></li>');
-            $result[] = '<li><a' . ($currentPage != $countPages ? ' href="' . $url . '?page=' . ($currentPage + 1) . '"' : '') . ' title="Следующая страница">»</a></li>';
+            array_unshift($result, '<li><a' . ($currentPage != 1 ? ' href="' . $url . '?page=1"' : '') . ' title="Предыдущая страница">«</a></li>');
+            $result[] = '<li><a' . ($currentPage != $countPages ? ' href="' . $url . '?page=' . $countPages . '"' : '') . ' title="Следующая страница">»</a></li>';
         }
 
         return implode("\n", $result);

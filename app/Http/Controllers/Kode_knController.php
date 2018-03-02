@@ -22,7 +22,7 @@ class Kode_knController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        define("PER_PAGE", 17);
+        define("PER_PAGE", 19);
     }
 
     /**
@@ -114,31 +114,33 @@ class Kode_knController extends Controller
                     $currentPage = isset($data['page']) ? $data['page'] : 1;
                     $srok = new Srok([$data['dateFrom'], $data['dateTo']]);
                     $categories = Category::all()->whereIn('code_col_name', $data['collumns']);
+                    $strok = ($data['srok'] == 'All') ? [0, 3, 6, 9, 12, 15, 18, 21] : [(int)$data['srok']];
 
                     if (isset($data['regionName']) && empty($data['stationName'])) {
 
-                        $countStr = $srok->getCountStrRegion($data['regionName']);
-                        $dataForTable = $srok->getRegionData($data['regionName'], $currentPage);
+                        $countStr = $srok->getCountStrRegion($data['regionName'], $strok);
+                        $dataForTable = $srok->getRegionData($data['regionName'], $strok, $currentPage);
 
                     } else if (isset($data['regionName']) && isset($data['stationName'])) {
 
-                        $countStr = $srok->getCountStrRegionStation($data['regionName'], $data['stationName']);
-                        $dataForTable = $srok->getRegionStationData($data['regionName'], $data['stationName'], $currentPage);
+                        $countStr = $srok->getCountStrRegionStation($data['regionName'], $data['stationName'], $strok);
+                        $dataForTable = $srok->getRegionStationData($data['regionName'], $data['stationName'], $strok, $currentPage);
 
                     } else if (empty($data['regionName']) && isset($data['stationName'])) {
 
-                        $countStr = $srok->getCountStrStation($data['stationName']);
-                        $dataForTable = $srok->getStationData($data['stationName'], $currentPage);
+                        $countStr = $srok->getCountStrStation($data['stationName'], $strok);
+                        $dataForTable = $srok->getStationData($data['stationName'], $strok, $currentPage);
 
                     } else if (empty($data['regionName']) && empty($data['stationName'])) {
 
-                        $countStr = $srok->getCountStrBasic();
-                        $dataForTable = $srok->getBasicData($currentPage);
+                        $countStr = $srok->getCountStrBasic($strok);
+                        $dataForTable = $srok->getBasicData($currentPage, $strok);
                     }
 
                     $countPages = ceil($countStr / PER_PAGE);
 
-                    $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true) : "";
+                    $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'),
+                        $countPages, $currentPage, true) : "";
 
                     $dataOut = [
                         'categories' => $categories,
@@ -146,6 +148,7 @@ class Kode_knController extends Controller
                         'countPages' => $countPages,
                         'currentPage' => $currentPage,
                         'paginationLinks' => $paginationLinks,
+                        'strok' => $strok
                     ];
 
                     return view('site.table', $dataOut);

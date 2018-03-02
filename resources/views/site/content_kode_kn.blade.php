@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <nav class="my-navbar">
                     <ul>
-                        <li><a href="#">КC-01(строковий)</a></li>
+                        <li><a href="{{url('/')}}">КC-01(строковий)</a></li>
                         <li><a href="#">Warep</a></li>
                         <li><a href="#">КC-01(добовий)</a></li>
                         <li><a href="#">Дані за місяць</a></li>
@@ -20,7 +20,7 @@
                 <div class="col-md-3">
                     <form action="{!! url('/') !!}" method="POST">
                         <div id="dates" class="form-group">
-                            <label>Период:</label>
+                            <label>Період:</label>
                             <div class="row">
                                 <div class="col-sm-1" style="margin-top: 10px;"> З:</div>
                                 <div class="col-sm-11">
@@ -35,13 +35,31 @@
                             </div>
                         </div>
 
+                        <div id="srok" class="form-group">
+                            <div class="row">
+                                <div class="col-sm-1" style="margin-top: 6px;"> Срок: </div>
+                                <div class="col-sm-11">
+                                    <select id="srok-select" class="form-control" name="srok" size="1">
+                                        <option value="All">Всі строки</option>
+                                        <option value="0">0</option>
+                                        <option value="3">3</option>
+                                        <option value="6">6</option>
+                                        <option value="9">9</option>
+                                        <option value="12">12</option>
+                                        <option value="15">15</option>
+                                        <option value="18">18</option>
+                                        <option value="21">21</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
                         @if(isset($regions) && is_object($regions))
                             <div id="regions" class="form-group">
                                 <label>Назва області:</label>
                                 <div class="row">
                                     <div class="col-sm-12 regions-wrapper">
-                                        <select id="regions-select" class="form-control" name="regionName[]"
-                                                id="region-name" size="6"
+                                        <select id="regions-select" class="form-control" name="regionName[]" size="6"
                                                 multiple>
                                             @foreach($regions as $key => $region)
                                                 @if($key == 0)
@@ -63,8 +81,7 @@
                                 <label>Назва станції:</label>
                                 <div class="row">
                                     <div class="col-sm-12 sections-wrapper">
-                                        <select id="stations-select" class="form-control" name="stationName[]"
-                                                id="station-name" size="8"
+                                        <select id="stations-select" class="form-control" name="stationName[]" size="8"
                                                 multiple>
                                             @foreach($stations as $station)
                                                 @php
@@ -82,8 +99,8 @@
                                 <label>Дані:</label>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <select id="categories-select" class="form-control" name="collumns[]"
-                                                id="collumns" size="9" multiple>
+                                        <select id="categories-select" class="form-control" name="collumns[]" size="9"
+                                                multiple>
                                             @foreach($categories as $category)
                                                 @if($category->selekted_col == true)
                                                     @php
@@ -139,11 +156,11 @@
                     </ul>
                 </div>
 
+            </div>
         </div>
     </div>
-</div>
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
-<script type="text/javascript" src="./js/ajaxRequests.js"></script>
-<script type="text/javascript" src="./js/filters.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
+    <script type="text/javascript" src="./js/ajaxRequests.js"></script>
+    <script type="text/javascript" src="./js/filters.js"></script>
