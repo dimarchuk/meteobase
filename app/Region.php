@@ -10,7 +10,7 @@ class Region extends Model
 {
     protected $table = 'CAT_OBL';
 
-    public function getRegions()
+    public function getAllRegions()
     {
         return DB::table($this->table)->get();
     }

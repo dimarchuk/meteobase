@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Helpers\Helper;
 use App\{
-    Category, Region, Station, Srok, User
+    Category, Region, Station, Srok, UserCategory, User
 };
 use Symfony\Component\VarDumper\Caster\DateCaster;
 use DB;
+use Auth;
 
 class Kode_knController extends Controller
 {
@@ -32,40 +33,99 @@ class Kode_knController extends Controller
         $stations = new Station();
         $categories = Category::all();
 
-        $currentDate = Date('Y-m-d');
-        $srok = new Srok([$currentDate, $currentDate]);
+        $uId = Auth::getUser()->getAuthIdentifier();
 
-        $selectedCategories = [];
-        foreach ($categories as $category) {
-            if ($category->selekted_col == true) {
-                $selectedCategories[] = $category->code_col_name;
+        if (DB::table('user_categories')->where('user_id', $uId)->exists()) {
+
+            $selectedFilters = UserCategory::all()->where('user_id', '=', $uId)->first();
+            parse_str($selectedFilters->categories_list, $selectedFilters);
+            $selectedRegions = isset($selectedFilters['regionName']) ? $selectedFilters['regionName'] : null;
+            $selectesStations = isset($selectedFilters['stationName']) ? $selectedFilters['stationName'] : null;
+
+            $srok = new Srok([$selectedFilters['dateFrom'], $selectedFilters['dateTo']]);
+            $strok = ($selectedFilters['srok'] == 'All') ? [0, 3, 6, 9, 12, 15, 18, 21] : [(int)$selectedFilters['srok']];
+            $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+
+            /**
+             * Data filtering
+             */
+            if (isset($selectedFilters['regionName']) && empty($selectedFilters['stationName'])) {
+
+                $countStr = $srok->getCountStrRegion($selectedFilters['regionName'], $strok);
+                $dataForTable = $srok->getRegionData($selectedFilters['regionName'], $strok, $currentPage);
+
+            } else if (isset($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
+
+                $countStr = $srok->getCountStrRegionStation($selectedFilters['regionName'], $selectedFilters['stationName'], $strok);
+                $dataForTable = $srok->getRegionStationData($selectedFilters['regionName'], $selectedFilters['stationName'], $strok, $currentPage);
+
+            } else if (empty($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
+
+                $countStr = $srok->getCountStrStation($selectedFilters['stationName'], $strok);
+                $dataForTable = $srok->getStationData($selectedFilters['stationName'], $strok, $currentPage);
+
+            } else if (empty($selectedFilters['regionName']) && empty($selectedFilters['stationName'])) {
+
+                $countStr = $srok->getCountStrBasic($strok);
+                $dataForTable = $srok->getBasicData($currentPage, $strok);
             }
+
+            $countPages = ceil($countStr / PER_PAGE);
+
+            $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'),
+                $countPages, $currentPage, true) : "";
+
+            /**
+             * array with all data for view
+             */
+            $data = [
+                'regions' => $regions->getAllRegions(),
+                'selectedRegions' => $selectedRegions,
+                'stations' => $stations->getAllStation(),
+                'selectedStations' => $selectesStations,
+                'categories' => $categories,
+                'dataFromSrok' => $dataForTable,
+                'selectedCategories' => $selectedFilters['collumns'],
+                'paginationLinks' => $paginationLinks
+            ];
+
+        } else {
+
+            $currentDate = Date('Y-m-d');
+            $srok = new Srok([$currentDate, $currentDate]);
+
+            $selectedCategories = [];
+            foreach ($categories as $category) {
+                if ($category->selekted_col == true) {
+                    $selectedCategories[] = $category->code_col_name;
+                }
+            }
+
+            $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+
+            /**
+             * Get data for table on one page
+             */
+            $dataFromTableSrok = $srok->getBasicData($currentPage);
+
+            /**
+             * Create pagination links
+             */
+            $countPages = ceil($srok->getCountStrBasic() / PER_PAGE);
+            $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
+
+            /**
+             * array with all data for view
+             */
+            $data = [
+                'regions' => $regions->getAllRegions(),
+                'stations' => $stations->getAllStation(),
+                'categories' => $categories,
+                'dataFromSrok' => $dataFromTableSrok,
+                'selectedCategories' => $selectedCategories,
+                'paginationLinks' => $paginationLinks
+            ];
         }
-
-        $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-
-        /**
-         * Get data for table on one page
-         */
-        $dataFromTableSrok = $srok->getBasicData($currentPage);
-
-        /**
-         * Create pagination links
-         */
-        $countPages = ceil($srok->getCountStrBasic() / PER_PAGE);
-        $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
-
-        /**
-         * array with all data for view
-         */
-        $data = [
-            'regions' => $regions->getRegions(),
-            'stations' => $stations->getAllStation(),
-            'categories' => $categories,
-            'dataFromSrok' => $dataFromTableSrok,
-            'selectedCategories' => $selectedCategories,
-            'paginationLinks' => $paginationLinks
-        ];
 
         return view('/site.kode_kn', $data);
     }
@@ -114,7 +174,7 @@ class Kode_knController extends Controller
                     /**
                      * Save selected filters
                      */
-                    $uId = \Auth::getUser()->getAuthIdentifier();
+                    $uId = Auth::getUser()->getAuthIdentifier();
                     if (DB::table('user_categories')->where('user_id', $uId)->exists()) {
                         DB::table('user_categories')->where('user_id', $uId)->update(
                             ['categories_list' => $_POST['data']]

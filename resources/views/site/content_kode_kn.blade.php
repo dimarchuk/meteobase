@@ -37,7 +37,7 @@
 
                         <div id="srok" class="form-group">
                             <div class="row">
-                                <div class="col-sm-1" style="margin-top: 6px;"> Срок: </div>
+                                <div class="col-sm-1" style="margin-top: 6px;"> Срок:</div>
                                 <div class="col-sm-11">
                                     <select id="srok-select" class="form-control" name="srok" size="1">
                                         <option value="All">Всі строки</option>
@@ -65,9 +65,22 @@
                                                 @if($key == 0)
                                                     @continue
                                                 @else
-                                                    @php
-                                                        echo "<option value=\"{$region->OBL_ID}\">{$region->NAME_OBL}</option>"?>
-                                                    @endphp
+                                                    @if(isset($selectedRegions))
+                                                        @if(in_array($region->OBL_ID, $selectedRegions))
+                                                            @php
+                                                                echo "<option selected value=\"{$region->OBL_ID}\">{$region->NAME_OBL}</option>"?>
+                                                            @endphp
+                                                        @else
+                                                            @php
+                                                                echo "<option value=\"{$region->OBL_ID}\">{$region->NAME_OBL}</option>"?>
+                                                            @endphp
+                                                        @endif
+
+                                                    @else
+                                                        @php
+                                                            echo "<option value=\"{$region->OBL_ID}\">{$region->NAME_OBL}</option>"?>
+                                                        @endphp
+                                                    @endif
                                                 @endif
                                             @endforeach
                                         </select>
@@ -84,9 +97,21 @@
                                         <select id="stations-select" class="form-control" name="stationName[]" size="8"
                                                 multiple>
                                             @foreach($stations as $station)
-                                                @php
-                                                    echo "<option value=\"{$station->IND_ST}\">{$station->NAME_ST}</option>"
-                                                @endphp
+                                                @if(isset($selectedStations))
+                                                    @if(in_array($station->IND_ST, $selectedStations))
+                                                        @php
+                                                            echo "<option selected value=\"{$station->IND_ST}\">{$station->NAME_ST}</option>"
+                                                        @endphp
+                                                    @else
+                                                        @php
+                                                            echo "<option value=\"{$station->IND_ST}\">{$station->NAME_ST}</option>"
+                                                        @endphp
+                                                    @endif
+                                                @else
+                                                    @php
+                                                        echo "<option value=\"{$station->IND_ST}\">{$station->NAME_ST}</option>"
+                                                    @endphp
+                                                @endif
                                             @endforeach
                                         </select>
                                     </div>
@@ -102,14 +127,26 @@
                                         <select id="categories-select" class="form-control" name="collumns[]" size="9"
                                                 multiple>
                                             @foreach($categories as $category)
-                                                @if($category->selekted_col == true)
-                                                    @php
-                                                        echo "<option selected value=\"{$category->code_col_name}\">{$category->col_name}</option>"
-                                                    @endphp
+                                                @if(isset($selectedCategories))
+                                                    @if(in_array($category->code_col_name, $selectedCategories))
+                                                        @php
+                                                            echo "<option selected value=\"{$category->code_col_name}\">{$category->col_name}</option>"
+                                                        @endphp
+                                                    @else
+                                                        @php
+                                                            echo "<option value=\"{$category->code_col_name}\">{$category->col_name}</option>"
+                                                        @endphp
+                                                    @endif
                                                 @else
-                                                    @php
-                                                        echo "<option value=\"{$category->code_col_name}\">{$category->col_name}</option>"
-                                                    @endphp
+                                                    @if($category->selekted_col == true)
+                                                        @php
+                                                            echo "<option selected value=\"{$category->code_col_name}\">{$category->col_name}</option>"
+                                                        @endphp
+                                                    @else
+                                                        @php
+                                                            echo "<option value=\"{$category->code_col_name}\">{$category->col_name}</option>"
+                                                        @endphp
+                                                    @endif
                                                 @endif
                                             @endforeach
                                         </select>
@@ -127,10 +164,20 @@
                             <thead>
                             <tr>
                                 @foreach($categories as $category)
-                                    @if($category->selekted_col == true)
-                                        @php
-                                            echo "<th>{$category->short_col_name}</th>"
-                                        @endphp
+                                    @if(isset($selectedCategories))
+                                        @foreach($selectedCategories as $selectedCategory)
+                                            @if($category->code_col_name == $selectedCategory)
+                                                @php
+                                                    echo "<th>{$category->short_col_name}</th>"
+                                                @endphp
+                                            @endif
+                                        @endforeach
+                                    @else
+                                        @if($category->selekted_col == true)
+                                            @php
+                                                echo "<th>{$category->short_col_name}</th>"
+                                            @endphp
+                                        @endif
                                     @endif
                                 @endforeach
                             </tr>

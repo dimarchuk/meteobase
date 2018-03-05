@@ -43,7 +43,6 @@ $(document).ready(function () {
         var $that = $(this),
             fData = $that.serialize() + "&requestName=selectInfoForTable";
 
-        $('.table-responsive').remove();
 
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -53,7 +52,7 @@ $(document).ready(function () {
             dataType: 'html',
             success: function (view) {
 
-
+                $('.table-responsive').remove();
                 $('.main-content').html(view);
 
                 $(document).on('click', '.pagination a', function (event) {

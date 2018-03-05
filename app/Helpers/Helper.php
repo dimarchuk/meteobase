@@ -39,4 +39,9 @@ class Helper
 
         return implode("\n", $result);
     }
+
+//    public function decodeDirectionWind(object $dataFromSrok)
+//    {
+//
+//    }
 }
