@@ -40,8 +40,21 @@ class Helper
         return implode("\n", $result);
     }
 
-//    public function decodeDirectionWind(object $dataFromSrok)
-//    {
-//
-//    }
+    public function decodeDirectionWind($dataFromSrok)
+    {
+        $code = \DB::table('WEATHER2')
+            ->select('DD', 'RUMB')
+            ->get();
+
+        for ($dataItem = 0; $dataItem < count($dataFromSrok); $dataItem++) {
+            for ($codeItem = 2; $codeItem <= 37; $codeItem++) {
+                $dataDD = $dataFromSrok[$dataItem]->DD;
+                $codeDD = explode('-', $code[$codeItem]->DD);
+
+                if ($dataDD >= $codeDD[0] && $dataDD <= $codeDD[1]) {
+                    $dataFromSrok[$dataItem]->DD = $code[$codeItem]->RUMB;
+                }
+            }
+        }
+    }
 }

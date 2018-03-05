@@ -75,6 +75,7 @@ class Kode_knController extends Controller
             $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'),
                 $countPages, $currentPage, true) : "";
 
+            $helper->decodeDirectionWind($dataForTable);
             /**
              * array with all data for view
              */
@@ -114,6 +115,7 @@ class Kode_knController extends Controller
             $countPages = ceil($srok->getCountStrBasic() / PER_PAGE);
             $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
 
+            $helper->decodeDirectionWind($dataFromTableSrok);
             /**
              * array with all data for view
              */
@@ -213,6 +215,8 @@ class Kode_knController extends Controller
 
                     $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'),
                         $countPages, $currentPage, true) : "";
+
+                    $helper->decodeDirectionWind($dataForTable);
 
                     $dataOut = [
                         'categories' => $categories,
