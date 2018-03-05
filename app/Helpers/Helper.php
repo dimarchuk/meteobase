@@ -40,6 +40,12 @@ class Helper
         return implode("\n", $result);
     }
 
+
+    /**
+     * Decode direction of the wind collumn from DD to RUMB
+     *
+     * @param $dataFromSrok
+     */
     public function decodeDirectionWind($dataFromSrok)
     {
         $code = \DB::table('WEATHER2')
@@ -47,8 +53,9 @@ class Helper
             ->get();
 
         for ($dataItem = 0; $dataItem < count($dataFromSrok); $dataItem++) {
+            $dataDD = $dataFromSrok[$dataItem]->DD;
+
             for ($codeItem = 2; $codeItem <= 37; $codeItem++) {
-                $dataDD = $dataFromSrok[$dataItem]->DD;
                 $codeDD = explode('-', $code[$codeItem]->DD);
 
                 if ($dataDD >= $codeDD[0] && $dataDD <= $codeDD[1]) {

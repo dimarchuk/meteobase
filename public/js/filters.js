@@ -32,9 +32,9 @@ $(document).ready(function () {
     setDate(date, 'input[name="dateFrom"]');
     setDate(date, 'input[name="dateTo"]');
 
-    multiSelect('#regions-select');
-    multiSelect('#stations-select');
-    multiSelect('#categories-select');
+    // multiSelect('#regions-select');
+    // multiSelect('#stations-select');
+    // multiSelect('#categories-select');
 });
 
 /**
