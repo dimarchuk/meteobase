@@ -186,9 +186,15 @@
                             @foreach($dataFromSrok as $item)
                                 <tr>
                                     @foreach($selectedCategories as $selectedCategory)
-                                        @php
-                                            echo "<td>{$item->$selectedCategory}</td>"
-                                        @endphp
+                                        @if($selectedCategory == 'A')
+                                            @php
+                                                echo "<td style = \"min-width: 200px;\">{$item->$selectedCategory}</td>"
+                                            @endphp
+                                        @else
+                                            @php
+                                                echo "<td>{$item->$selectedCategory}</td>"
+                                            @endphp
+                                        @endif
                                     @endforeach
                                 </tr>
                             @endforeach
@@ -199,10 +205,8 @@
                         @php
                             echo $paginationLinks;
                         @endphp
-
                     </ul>
                 </div>
-
             </div>
         </div>
     </div>

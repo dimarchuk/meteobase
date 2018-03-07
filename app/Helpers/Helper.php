@@ -10,7 +10,7 @@ class Helper
      * @param string $url
      * @param int $countPages
      * @param int $currentPage
-     * @param bool $extra
+     * @param bool $showArrows
      * @return string
      */
     public static function generateLinksForPagination(string $url, int $countPages, $currentPage = 1, $showArrows = false)
@@ -42,7 +42,7 @@ class Helper
 
 
     /**
-     * Decode direction of the wind collumn from DD to RUMB
+     * Decode direction of the wind, column from DD to RUMB
      *
      * @param $dataFromSrok
      */
@@ -60,6 +60,24 @@ class Helper
 
                 if ($dataDD >= $codeDD[0] && $dataDD <= $codeDD[1]) {
                     $dataFromSrok[$dataItem]->DD = $code[$codeItem]->RUMB;
+                }
+            }
+        }
+    }
+
+    public function decodeBaricЕendency($dataFromSrok)
+    {
+        $code = \DB::table('WEATHER')
+            ->select('CODE_KN01', 'A')
+            ->get();
+
+        for ($dataItem = 0; $dataItem < count($dataFromSrok); $dataItem++) {
+            $dataA = $dataFromSrok[$dataItem]->A;
+
+            for ($codeItem = 0; $codeItem < count($code); $codeItem++) {
+                $codeA =  $code[$codeItem]->CODE_KN01;
+                if ($dataA == $codeA) {
+                    $dataFromSrok[$dataItem]->A = $code[$codeItem]->A;
                 }
             }
         }

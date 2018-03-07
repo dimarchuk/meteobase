@@ -42,11 +42,5 @@
 }
 
 .table td, .table th {
-    min-width: 110px;
+    min-width: 90px;
 }
-
-/*not used*/
-/*.span3 {*/
-    /*height: 668px;*/
-    /*overflow: scroll;*/
-/*}​*/
