@@ -15,8 +15,18 @@
                 @foreach($categories as $category)
                     @php
                         $codeCategory = $category->code_col_name;
-                            echo "<td>{$item->$codeCategory}</td>"
+                            //echo "<td>{$item->$codeCategory}</td>"
                     @endphp
+
+                    @if($codeCategory == 'A')
+                        @php
+                            echo "<td style = \"min-width: 200px;\">{$item->$codeCategory}</td>"
+                        @endphp
+                    @else
+                        @php
+                            echo "<td>{$item->$codeCategory}</td>"
+                        @endphp
+                    @endif
                 @endforeach
             </tr>
         @endforeach

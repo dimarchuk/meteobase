@@ -73,7 +73,7 @@ class Kode_knController extends Controller
                 $countStr = $srok->getCountStrBasic($strok);
                 $dataForTable = $srok->getBasicData($currentPage, $strok);
             }
-dump($dataForTable);
+
             $countPages = ceil($countStr / PER_PAGE);
 
             $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'),
@@ -122,6 +122,8 @@ dump($dataForTable);
             $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
 
             $helper->decodeDirectionWind($dataFromTableSrok);
+            $helper->decodeBaricЕendency($dataFromTableSrok);
+
 
             /**
              * array with all data for view
@@ -221,6 +223,8 @@ dump($dataForTable);
                     $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true) : "";
 
                     $helper->decodeDirectionWind($dataForTable);
+                    $helper->decodeBaricЕendency($dataForTable);
+
 
                     $dataOut = [
                         'categories' => $categories,
