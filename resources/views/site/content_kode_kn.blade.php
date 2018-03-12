@@ -186,7 +186,7 @@
                             @foreach($dataFromSrok as $item)
                                 <tr>
                                     @foreach($selectedCategories as $selectedCategory)
-                                        @if($selectedCategory == 'A')
+                                        @if($selectedCategory == 'A' || $selectedCategory == 'WW' || $selectedCategory == 'W1' || $selectedCategory == 'W2')
                                             @php
                                                 echo "<td style = \"min-width: 200px;\">{$item->$selectedCategory}</td>"
                                             @endphp

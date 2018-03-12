@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use DB;
+
 class Helper
 {
     /**
@@ -60,14 +62,15 @@ class Helper
 
                 if ($dataDD >= $codeDD[0] && $dataDD <= $codeDD[1]) {
                     $dataFromSrok[$dataItem]->DD = $code[$codeItem]->RUMB;
+                    break;
                 }
             }
         }
     }
 
-    public function decodeBaricЕendency($dataFromSrok)
+    public function decodeBaricTendency($dataFromSrok)
     {
-        $code = \DB::table('WEATHER')
+        $code = DB::table('WEATHER')
             ->select('CODE_KN01', 'A')
             ->get();
 
@@ -75,9 +78,58 @@ class Helper
             $dataA = $dataFromSrok[$dataItem]->A;
 
             for ($codeItem = 0; $codeItem < count($code); $codeItem++) {
-                $codeA =  $code[$codeItem]->CODE_KN01;
+                $codeA = $code[$codeItem]->CODE_KN01;
                 if ($dataA == $codeA) {
                     $dataFromSrok[$dataItem]->A = $code[$codeItem]->A;
+                    break;
+                }
+            }
+        }
+    }
+
+    public function decodeWeatherSrok($dataFromSrok)
+    {
+        $code = DB::table('WEATHER2')
+            ->select('CODE_KN01', 'WW')
+            ->get();
+
+        for ($dataItem = 0; $dataItem < count($dataFromSrok); $dataItem++) {
+            $dataWW = $dataFromSrok[$dataItem]->WW;
+
+            for ($codeItem = 0; $codeItem < count($code); $codeItem++) {
+                $codeWW = $code[$codeItem]->CODE_KN01;
+                if ($dataWW == 508 || $dataWW == 509) {
+                    $dataFromSrok[$dataItem]->WW = "";
+                } else if ($dataWW == $codeWW) {
+                    $dataFromSrok[$dataItem]->WW = $code[$codeItem]->WW;
+                }
+            }
+        }
+    }
+
+    public function decodeWeatherSrok12($dataFromSrok)
+    {
+        $code = DB::table('WEATHER')
+            ->select('CODE_KN01', 'W1W2')
+            ->get();
+
+        for ($dataItem = 0; $dataItem < count($dataFromSrok); $dataItem++) {
+            $dataW1 = $dataFromSrok[$dataItem]->W1;
+            $dataW2 = $dataFromSrok[$dataItem]->W2;
+
+            for ($codeItem = 0; $codeItem < count($code); $codeItem++) {
+                $codeW = $code[$codeItem]->CODE_KN01;
+
+                if ($dataW1 == 10) {
+                    $dataFromSrok[$dataItem]->W1 = "";
+                } else if ($dataW1 == $codeW) {
+                    $dataFromSrok[$dataItem]->W1 = $code[$codeItem]->W1W2;
+                }
+
+                if ($dataW2 == 10) {
+                    $dataFromSrok[$dataItem]->W2 = "";
+                } else if ($dataW2 == $codeW) {
+                    $dataFromSrok[$dataItem]->W2 = $code[$codeItem]->W1W2;
                 }
             }
         }

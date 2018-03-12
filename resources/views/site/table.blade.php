@@ -18,7 +18,7 @@
                             //echo "<td>{$item->$codeCategory}</td>"
                     @endphp
 
-                    @if($codeCategory == 'A')
+                    @if($codeCategory == 'A' || $codeCategory == 'WW'|| $codeCategory == 'W1' || $codeCategory == 'W2')
                         @php
                             echo "<td style = \"min-width: 200px;\">{$item->$codeCategory}</td>"
                         @endphp

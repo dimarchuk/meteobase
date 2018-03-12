@@ -80,7 +80,9 @@ class Kode_knController extends Controller
                 $countPages, $currentPage, true) : "";
 
             $helper->decodeDirectionWind($dataForTable);
-            $helper->decodeBaricЕendency($dataForTable);
+            $helper->decodeBaricTendency($dataForTable);
+            $helper->decodeWeatherSrok($dataForTable);
+            $helper->decodeWeatherSrok12($dataForTable);
             /**
              * array with all data for view
              */
@@ -122,8 +124,9 @@ class Kode_knController extends Controller
             $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
 
             $helper->decodeDirectionWind($dataFromTableSrok);
-            $helper->decodeBaricЕendency($dataFromTableSrok);
-
+            $helper->decodeBaricTendency($dataFromTableSrok);
+            $helper->decodeWeatherSrok($dataFromTableSrok);
+            $helper->decodeWeatherSrok12($dataFromTableSrok);
 
             /**
              * array with all data for view
@@ -223,7 +226,9 @@ class Kode_knController extends Controller
                     $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true) : "";
 
                     $helper->decodeDirectionWind($dataForTable);
-                    $helper->decodeBaricЕendency($dataForTable);
+                    $helper->decodeBaricTendency($dataForTable);
+                    $helper->decodeWeatherSrok($dataForTable);
+                    $helper->decodeWeatherSrok12($dataForTable);
 
 
                     $dataOut = [
