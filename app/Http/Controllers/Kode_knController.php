@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
-use App\Helpers\Helper;
+use App\Helpers\{
+    Helper, Decode
+};
 use App\{
     Category, Region, Station, Srok, UserCategory, User
 };
@@ -29,6 +32,7 @@ class Kode_knController extends Controller
     public function show(Request $request)
     {
         $helper = new Helper();
+        $decode = new Decode();
         $regions = new Region();
         $stations = new Station();
         $categories = Category::all();
@@ -79,10 +83,14 @@ class Kode_knController extends Controller
             $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'),
                 $countPages, $currentPage, true) : "";
 
-            $helper->decodeDirectionWind($dataForTable);
-            $helper->decodeBaricTendency($dataForTable);
-            $helper->decodeWeatherSrok($dataForTable);
-            $helper->decodeWeatherSrok12($dataForTable);
+            $decode->decodeDirectionWind($dataForTable);
+            $decode->decodeBaricTendency($dataForTable);
+            $decode->decodeWeatherSrok($dataForTable);
+            $decode->decodeWeatherSrok12($dataForTable);
+            $decode->decodeClouds($dataForTable);
+            $decode->decodeCloudsC($dataForTable);
+            $decode->decodeSoilCondition($dataForTable);
+
             /**
              * array with all data for view
              */
@@ -115,7 +123,7 @@ class Kode_knController extends Controller
             /**
              * Get data for table on one page
              */
-            $dataFromTableSrok = $srok->getBasicData($currentPage);
+            $dataForTable = $srok->getBasicData($currentPage);
 
             /**
              * Create pagination links
@@ -123,10 +131,13 @@ class Kode_knController extends Controller
             $countPages = ceil($srok->getCountStrBasic() / PER_PAGE);
             $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
 
-            $helper->decodeDirectionWind($dataFromTableSrok);
-            $helper->decodeBaricTendency($dataFromTableSrok);
-            $helper->decodeWeatherSrok($dataFromTableSrok);
-            $helper->decodeWeatherSrok12($dataFromTableSrok);
+            $decode->decodeDirectionWind($dataForTable);
+            $decode->decodeBaricTendency($dataForTable);
+            $decode->decodeWeatherSrok($dataForTable);
+            $decode->decodeWeatherSrok12($dataForTable);
+            $decode->decodeClouds($dataForTable);
+            $decode->decodeCloudsC($dataForTable);
+            $decode->decodeSoilCondition($dataForTable);
 
             /**
              * array with all data for view
@@ -135,7 +146,7 @@ class Kode_knController extends Controller
                 'regions' => $regions->getAllRegions(),
                 'stations' => $stations->getAllStation(),
                 'categories' => $categories,
-                'dataFromSrok' => $dataFromTableSrok,
+                'dataFromSrok' => $dataForTable,
                 'selectedCategories' => $selectedCategories,
                 'paginationLinks' => $paginationLinks
             ];
@@ -152,6 +163,7 @@ class Kode_knController extends Controller
     public function getDataKodeKN(Request $request)
     {
         $helper = new Helper();
+        $decode = new Decode();
         $stations = new Station();
 
         parse_str($_POST['data'], $data);
@@ -225,11 +237,13 @@ class Kode_knController extends Controller
 
                     $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true) : "";
 
-                    $helper->decodeDirectionWind($dataForTable);
-                    $helper->decodeBaricTendency($dataForTable);
-                    $helper->decodeWeatherSrok($dataForTable);
-                    $helper->decodeWeatherSrok12($dataForTable);
-
+                    $decode->decodeDirectionWind($dataForTable);
+                    $decode->decodeBaricTendency($dataForTable);
+                    $decode->decodeWeatherSrok($dataForTable);
+                    $decode->decodeWeatherSrok12($dataForTable);
+                    $decode->decodeClouds($dataForTable);
+                    $decode->decodeCloudsC($dataForTable);
+                    $decode->decodeSoilCondition($dataForTable);
 
                     $dataOut = [
                         'categories' => $categories,

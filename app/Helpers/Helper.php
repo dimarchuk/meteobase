@@ -15,7 +15,7 @@ class Helper
      * @param bool $showArrows
      * @return string
      */
-    public static function generateLinksForPagination(string $url, int $countPages, $currentPage = 1, $showArrows = false)
+    public static function generateLinksForPagination(string $url, int $countPages, int $currentPage = 1, bool $showArrows = false): string
     {
         $j = 1 + ($currentPage < 2 || ($currentPage > $countPages - 3) ? 0 : $currentPage - 2 - ($currentPage == $countPages - 3));
 
@@ -40,98 +40,5 @@ class Helper
         }
 
         return implode("\n", $result);
-    }
-
-
-    /**
-     * Decode direction of the wind, column from DD to RUMB
-     *
-     * @param $dataFromSrok
-     */
-    public function decodeDirectionWind($dataFromSrok)
-    {
-        $code = \DB::table('WEATHER2')
-            ->select('DD', 'RUMB')
-            ->get();
-
-        for ($dataItem = 0; $dataItem < count($dataFromSrok); $dataItem++) {
-            $dataDD = $dataFromSrok[$dataItem]->DD;
-
-            for ($codeItem = 2; $codeItem <= 37; $codeItem++) {
-                $codeDD = explode('-', $code[$codeItem]->DD);
-
-                if ($dataDD >= $codeDD[0] && $dataDD <= $codeDD[1]) {
-                    $dataFromSrok[$dataItem]->DD = $code[$codeItem]->RUMB;
-                    break;
-                }
-            }
-        }
-    }
-
-    public function decodeBaricTendency($dataFromSrok)
-    {
-        $code = DB::table('WEATHER')
-            ->select('CODE_KN01', 'A')
-            ->get();
-
-        for ($dataItem = 0; $dataItem < count($dataFromSrok); $dataItem++) {
-            $dataA = $dataFromSrok[$dataItem]->A;
-
-            for ($codeItem = 0; $codeItem < count($code); $codeItem++) {
-                $codeA = $code[$codeItem]->CODE_KN01;
-                if ($dataA == $codeA) {
-                    $dataFromSrok[$dataItem]->A = $code[$codeItem]->A;
-                    break;
-                }
-            }
-        }
-    }
-
-    public function decodeWeatherSrok($dataFromSrok)
-    {
-        $code = DB::table('WEATHER2')
-            ->select('CODE_KN01', 'WW')
-            ->get();
-
-        for ($dataItem = 0; $dataItem < count($dataFromSrok); $dataItem++) {
-            $dataWW = $dataFromSrok[$dataItem]->WW;
-
-            for ($codeItem = 0; $codeItem < count($code); $codeItem++) {
-                $codeWW = $code[$codeItem]->CODE_KN01;
-                if ($dataWW == 508 || $dataWW == 509) {
-                    $dataFromSrok[$dataItem]->WW = "";
-                } else if ($dataWW == $codeWW) {
-                    $dataFromSrok[$dataItem]->WW = $code[$codeItem]->WW;
-                }
-            }
-        }
-    }
-
-    public function decodeWeatherSrok12($dataFromSrok)
-    {
-        $code = DB::table('WEATHER')
-            ->select('CODE_KN01', 'W1W2')
-            ->get();
-
-        for ($dataItem = 0; $dataItem < count($dataFromSrok); $dataItem++) {
-            $dataW1 = $dataFromSrok[$dataItem]->W1;
-            $dataW2 = $dataFromSrok[$dataItem]->W2;
-
-            for ($codeItem = 0; $codeItem < count($code); $codeItem++) {
-                $codeW = $code[$codeItem]->CODE_KN01;
-
-                if ($dataW1 == 10) {
-                    $dataFromSrok[$dataItem]->W1 = "";
-                } else if ($dataW1 == $codeW) {
-                    $dataFromSrok[$dataItem]->W1 = $code[$codeItem]->W1W2;
-                }
-
-                if ($dataW2 == 10) {
-                    $dataFromSrok[$dataItem]->W2 = "";
-                } else if ($dataW2 == $codeW) {
-                    $dataFromSrok[$dataItem]->W2 = $code[$codeItem]->W1W2;
-                }
-            }
-        }
     }
 }

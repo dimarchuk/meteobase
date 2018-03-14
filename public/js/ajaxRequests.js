@@ -65,7 +65,10 @@ $(document).ready(function () {
         });
     });
 
-
+    $("tr").on('click', function (event) {
+        var selectedRow = $(this).children("td");
+        console.log(selectedRow[2].textContent);
+    });
 });
 
 function getSelectedPage(page) {
