@@ -41,4 +41,15 @@ class Helper
 
         return implode("\n", $result);
     }
+
+
+    public function addItemsInArr(array $needle, array &$haystack)
+    {
+        $val = true;
+        for ($i = count($needle) - 1; $i >= 0; $i--) {
+            if (!in_array($needle[$i], $haystack)) {
+                array_unshift($haystack, $needle[$i]);
+            }
+        }
+    }
 }

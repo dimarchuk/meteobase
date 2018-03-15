@@ -21,7 +21,7 @@
                     @if($codeCategory == 'A' || $codeCategory == 'WW'|| $codeCategory == 'W1' || $codeCategory == 'W2'
                     || $codeCategory == 'CL'|| $codeCategory == 'CM'|| $codeCategory == 'CH' || $codeCategory == 'E')
                         @php
-                            echo "<td style = \"min-width: 200px;\">{$item->$codeCategory}</td>"
+                            echo "<td style = \"min-width: 270px;\">{$item->$codeCategory}</td>"
                         @endphp
                     @else
                         @php

@@ -8,8 +8,9 @@ use App\Helpers\{
     Helper, Decode
 };
 use App\{
-    Category, Region, Station, Srok, UserCategory, User
+    Category, Region, Station, Srok, UserCategory, Group9, User
 };
+use function MongoDB\BSON\toJSON;
 use Symfony\Component\VarDumper\Caster\DateCaster;
 use DB;
 use Auth;
@@ -44,6 +45,10 @@ class Kode_knController extends Controller
             $selectedFilters = UserCategory::all()->where('user_id', '=', $uId)->first();
 
             parse_str($selectedFilters->categories_list, $selectedFilters);
+
+            //add default categiry
+            $defaultColl = ['NAME_OBL', 'NAME_ST', 'IND_ST', 'DATE_CH', 'SROK_CH'];
+            $helper->addItemsinArr($defaultColl, $selectedFilters['collumns']);
 
             $selectedRegions = isset($selectedFilters['regionName']) ? $selectedFilters['regionName'] : null;
             $selectesStations = isset($selectedFilters['stationName']) ? $selectedFilters['stationName'] : null;
@@ -107,7 +112,6 @@ class Kode_knController extends Controller
 
         } else {
             //if first auth
-
             $currentDate = Date('Y-m-d');
             $srok = new Srok([$currentDate, $currentDate]);
 
@@ -170,7 +174,6 @@ class Kode_knController extends Controller
 
         $ajaxIdentification = $data['requestName'];
 
-
         switch ($ajaxIdentification) {
             case "selectStation":
                 {
@@ -195,6 +198,11 @@ class Kode_knController extends Controller
                 {
                     $currentPage = isset($data['page']) ? $data['page'] : 1;
                     $srok = new Srok([$data['dateFrom'], $data['dateTo']]);
+
+                    //add default categiry
+                    $defaultColl = ['NAME_OBL', 'NAME_ST', 'IND_ST', 'DATE_CH', 'SROK_CH'];
+                    $helper->addItemsinArr($defaultColl, $data['collumns']);
+
                     $categories = Category::all()->whereIn('code_col_name', $data['collumns']);
 
                     $strok = ($data['srok'] == 'All') ? [0, 3, 6, 9, 12, 15, 18, 21] : [(int)$data['srok']];
@@ -255,6 +263,14 @@ class Kode_knController extends Controller
                     ];
 
                     return view('site.table', $dataOut);
+                    break;
+                }
+            case "selectGroup9":
+                {
+                    $group9 = new Group9();
+                    $response_data = $group9->selectGroup9Info($data);
+
+                    return response($response_data, 200);
                     break;
                 }
         }

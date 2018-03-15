@@ -42,8 +42,6 @@ $(document).ready(function () {
         event.preventDefault();
         var $that = $(this),
             fData = $that.serialize() + "&requestName=selectInfoForTable";
-
-
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             type: $that.attr('method'),
@@ -67,20 +65,21 @@ $(document).ready(function () {
 
     $("tr").on('click', function (event) {
         var selectedRow = $(this).children("td");
-        console.log(selectedRow[2].textContent);
+        var data = "id=" + selectedRow[2].textContent + "&date=" + selectedRow[3].textContent + "&srok=" + selectedRow[4].textContent + "&requestName=selectGroup9";
+        getGroup9(data);
+
     });
 });
 
 function getSelectedPage(page) {
 
     var fData = $('form').serialize() + "&requestName=selectInfoForTable" + "&page=" + page;
-
     $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         type: 'POST',
         url: '/',
         data: {data: fData},
-        dataType: 'html',
+        dataType: 'html'
     }).done(function (view) {
 
         $('.table-responsive').remove();
@@ -88,6 +87,25 @@ function getSelectedPage(page) {
         $('.main-content').html(view);
 
     }).fail(function () {
-        alert('Posts could not be loaded.');
+        alert('Page could not be loaded.');
+    });
+}
+
+function getGroup9(data) {
+
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: 'POST',
+        url: '/',
+        data: {data: data},
+        dataType: 'json'
+    }).done(function (response) {
+
+        console.log(response);
+
+    }).fail(function () {
+
+        alert('Group 9 could not be loaded.');
+
     });
 }

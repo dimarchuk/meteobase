@@ -128,15 +128,24 @@
                                                 multiple>
                                             @foreach($categories as $category)
                                                 @if(isset($selectedCategories))
-                                                    @if(in_array($category->code_col_name, $selectedCategories))
+                                                    @if($category->code_col_name == 'NAME_OBL' || $category->code_col_name == 'NAME_ST'
+                                                    || $category->code_col_name == 'IND_ST'|| $category->code_col_name == 'DATE_CH'
+                                                    || $category->code_col_name == 'SROK_CH')
                                                         @php
-                                                            echo "<option selected value=\"{$category->code_col_name}\">{$category->col_name}</option>"
+                                                            echo "<option disabled value=\"{$category->code_col_name}\">{$category->col_name}</option>"
                                                         @endphp
                                                     @else
-                                                        @php
-                                                            echo "<option value=\"{$category->code_col_name}\">{$category->col_name}</option>"
-                                                        @endphp
+                                                        @if(in_array($category->code_col_name, $selectedCategories))
+                                                            @php
+                                                                echo "<option selected value=\"{$category->code_col_name}\">{$category->col_name}</option>"
+                                                            @endphp
+                                                        @else
+                                                            @php
+                                                                echo "<option value=\"{$category->code_col_name}\">{$category->col_name}</option>"
+                                                            @endphp
+                                                        @endif
                                                     @endif
+
                                                 @else
                                                     @if($category->selekted_col == true)
                                                         @php
@@ -190,7 +199,7 @@
                                         || $selectedCategory == 'W2'|| $selectedCategory == 'CL'|| $selectedCategory == 'CM'
                                         || $selectedCategory == 'CH'|| $selectedCategory == 'E')
                                             @php
-                                                echo "<td style = \"min-width: 200px;\">{$item->$selectedCategory}</td>"
+                                                echo "<td style = \"min-width: 270px;\">{$item->$selectedCategory}</td>"
                                             @endphp
                                         @else
                                             @php
