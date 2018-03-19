@@ -59,16 +59,12 @@ $(document).ready(function () {
                     event.preventDefault();
                 });
 
-            },
+                getGroup9();
+
+            }
         });
     });
-
-    $("tr").on('click', function (event) {
-        var selectedRow = $(this).children("td");
-        var data = "id=" + selectedRow[2].textContent + "&date=" + selectedRow[3].textContent + "&srok=" + selectedRow[4].textContent + "&requestName=selectGroup9";
-        getGroup9(data);
-
-    });
+    getGroup9();
 });
 
 function getSelectedPage(page) {
@@ -83,29 +79,49 @@ function getSelectedPage(page) {
     }).done(function (view) {
 
         $('.table-responsive').remove();
-
         $('.main-content').html(view);
 
     }).fail(function () {
+
         alert('Page could not be loaded.');
+
     });
 }
 
-function getGroup9(data) {
+function getGroup9() {
+    $("tr").on('click', function (event) {
+        var selectedRow = $(this).children("td");
+        var data = "id=" + selectedRow[2].textContent + "&date=" + selectedRow[3].textContent + "&srok=" + selectedRow[4].textContent + "&requestName=selectGroup9";
 
-    $.ajax({
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        type: 'POST',
-        url: '/',
-        data: {data: data},
-        dataType: 'json'
-    }).done(function (response) {
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            type: 'POST',
+            url: '/',
+            data: {data: data},
+            dataType: 'json'
+        }).done(function (response) {
 
-        console.log(response);
+            $('#group9').remove();
 
-    }).fail(function () {
+            console.log(response.length);
+            if (response.length != 0) {
+                var content = ' <table id="group9" class="table table-condensed table-striped"><caption>9 Група</caption><thead><tr><th>Явища</th><th>Значення</th></tr></thead><tbody>';
 
-        alert('Group 9 could not be loaded.');
+
+                $.each(response, function (item) {
+                    content += '<tr><td>' + response[item].KOD_SPSP + '</td><td>' + response[item].VALUE_SPSP + '</td></tr>';
+                });
+
+                content += '</tbody></table>';
+                $('.group9-wrapper').append(content);
+            }
+
+        }).fail(function () {
+
+            alert('Group 9 could not be loaded.');
+
+        });
 
     });
+
 }

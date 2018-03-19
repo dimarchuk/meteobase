@@ -10,8 +10,7 @@ use App\Helpers\{
 use App\{
     Category, Region, Station, Srok, UserCategory, Group9, User
 };
-use function MongoDB\BSON\toJSON;
-use Symfony\Component\VarDumper\Caster\DateCaster;
+
 use DB;
 use Auth;
 
@@ -162,7 +161,7 @@ class Kode_knController extends Controller
 
     /**
      * @param Request $request
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Symfony\Component\HttpFoundation\Response
      */
     public function getDataKodeKN(Request $request)
     {
@@ -265,11 +264,12 @@ class Kode_knController extends Controller
                     return view('site.table', $dataOut);
                     break;
                 }
+
             case "selectGroup9":
                 {
                     $group9 = new Group9();
-                    $response_data = $group9->selectGroup9Info($data);
-
+                    $group = $group9->selectGroup9Info($data);
+                    $response_data = $decode->decodeSPSP($group);
                     return response($response_data, 200);
                     break;
                 }

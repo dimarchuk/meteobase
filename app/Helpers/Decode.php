@@ -157,6 +157,9 @@ class Decode
         }
     }
 
+    /**
+     * @param $dataFromSrok
+     */
     public function decodeSoilCondition($dataFromSrok)
     {
         $code = DB::table('WEATHER')
@@ -180,5 +183,29 @@ class Decode
 
             }
         }
+    }
+
+    /**
+     * @param $dataFromGroup
+     * @return mixed
+     */
+    public function decodeSPSP($dataFromGroup)
+    {
+
+        $code = DB::table('WEATHER2')
+            ->select('CODE_KN01', 'SPSP')
+            ->get();
+
+        for ($dataItem = 0; $dataItem < count($dataFromGroup); $dataItem++) {
+            $data = $dataFromGroup[$dataItem]->KOD_SPSP;
+
+            for ($codeItem = 0; $codeItem < count($code); $codeItem++) {
+                $codeSP = $code[$codeItem]->CODE_KN01;
+                if ($data == $codeSP) {
+                    $dataFromGroup[$dataItem]->KOD_SPSP = $code[$codeItem]->SPSP;
+                }
+            }
+        }
+        return $dataFromGroup;
     }
 }

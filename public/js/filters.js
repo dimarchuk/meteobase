@@ -39,6 +39,7 @@ $(document).ready(function () {
 
 /**
  * Select more then one elements
+ * @param id
  */
 function multiSelect(id) {
     $(id + '>option').mousedown(function (e) {
