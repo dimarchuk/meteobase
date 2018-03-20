@@ -6,7 +6,6 @@ namespace App\Exports;
 use DB;
 use Auth;
 use Illuminate\Contracts\View\View;
-use Redirect;
 use Maatwebsite\Excel\Concerns\FromView;
 use App\{
     Category, UserCategory
@@ -18,9 +17,14 @@ use App\Helpers\{
 
 class InvoicesExport implements FromView
 {
+    /**
+     * @var array
+     */
     private $data = [];
 
-
+    /**
+     * @return array
+     */
     function getData()
     {
         return $this->data;

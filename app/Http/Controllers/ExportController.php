@@ -10,7 +10,7 @@ use Redirect;
 class ExportController extends Controller
 {
     /**
-     * @return $this|mixed
+     * @return $this|\Symfony\Component\HttpFoundation\BinaryFileResponse|mixed
      */
     public function export()
     {
@@ -24,9 +24,9 @@ class ExportController extends Controller
             return Redirect::back()->withErrors(['Забагато данних, будь ласка, зменшіть Вашу вибірку']);
         }
 
-        $date = date('Y-m-d H:m:s');
+        $fileName = date('Y-m-d H:m:s');
 
-        return Excel::download(new InvoicesExport(), $date . '.xlsx');
+        return Excel::download(new InvoicesExport(), $fileName . '.xlsx');
     }
 
 }

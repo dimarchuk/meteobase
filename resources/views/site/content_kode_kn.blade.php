@@ -37,8 +37,8 @@
 
                         <div id="srok" class="form-group">
                             <div class="row">
-                                <div class="col-sm-1" style="margin-top: 6px;"> Виберіть срок:</div>
-                                <div class="col-sm-11">
+                                <div class="col-sm-5" style="margin-top: 6px;"> Виберіть срок:</div>
+                                <div class="col-sm-7">
                                     <select id="srok-select" class="form-control" name="srok" size="1">
                                         <option value="All">Всі строки</option>
                                         <option value="0">0</option>
