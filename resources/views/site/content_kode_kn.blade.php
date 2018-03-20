@@ -173,7 +173,7 @@
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="float: right; margin-bottom: 10px;">
                         <a href="/export" id="export" class="btn btn-success" style="width: 100%">Create Excel</a>
                         </div>
-                        </div>
+                        </div>/
                     </form>
 
                 </div>
