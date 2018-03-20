@@ -25,12 +25,14 @@ class Kode_knController extends Controller
         define("PER_PAGE", 18);
     }
 
+
     /**
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function show(Request $request)
     {
+
         $helper = new Helper();
         $decode = new Decode();
         $regions = new Region();

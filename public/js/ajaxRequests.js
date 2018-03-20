@@ -88,6 +88,7 @@ function getSelectedPage(page) {
     });
 }
 
+
 function getGroup9() {
     $("tr").on('click', function (event) {
         var selectedRow = $(this).children("td");

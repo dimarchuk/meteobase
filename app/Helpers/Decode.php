@@ -25,6 +25,8 @@ class Decode
                 if ($dataDD >= $codeDD[0] && $dataDD <= $codeDD[1]) {
                     $dataFromSrok[$dataItem]->DD = $code[$codeItem]->RUMB;
                     break;
+                } else if($dataDD == 0 || $dataDD == 360) {
+                    $dataFromSrok[$dataItem]->DD = 'Пн';
                 }
             }
         }

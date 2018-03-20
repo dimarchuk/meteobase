@@ -18,9 +18,9 @@
             <div class="row">
 
                 <div class="col-md-3">
-                    <form action="{!! url('/') !!}" method="POST">
+                    <form id="filters" action="{!! url('/') !!}" method="POST">
                         <div id="dates" class="form-group">
-                            <label>Період:</label>
+                            <label>Виберіть період:</label>
                             <div class="row">
                                 <div class="col-sm-1" style="margin-top: 10px;"> З:</div>
                                 <div class="col-sm-11">
@@ -37,7 +37,7 @@
 
                         <div id="srok" class="form-group">
                             <div class="row">
-                                <div class="col-sm-1" style="margin-top: 6px;"> Срок:</div>
+                                <div class="col-sm-1" style="margin-top: 6px;"> Виберіть срок:</div>
                                 <div class="col-sm-11">
                                     <select id="srok-select" class="form-control" name="srok" size="1">
                                         <option value="All">Всі строки</option>
@@ -56,7 +56,7 @@
 
                         @if(isset($regions) && is_object($regions))
                             <div id="regions" class="form-group">
-                                <label>Назва області:</label>
+                                <label>Виберіть назву області:</label>
                                 <div class="row">
                                     <div class="col-sm-12 regions-wrapper">
                                         <select id="regions-select" class="form-control" name="regionName[]" size="6"
@@ -91,7 +91,7 @@
 
                         @if(isset($stations) && is_object($stations))
                             <div id="stations" class="form-group">
-                                <label>Назва станції:</label>
+                                <label>Виберіть назву станції:</label>
                                 <div class="row">
                                     <div class="col-sm-12 sections-wrapper">
                                         <select id="stations-select" class="form-control" name="stationName[]" size="8"
@@ -121,7 +121,7 @@
 
                         @if(isset($categories) && is_object($categories))
                             <div id="categories" class="form-group">
-                                <label>Дані:</label>
+                                <label>Виберіть дані:</label>
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <select id="categories-select" class="form-control" name="collumns[]" size="9"
@@ -161,10 +161,21 @@
                                         </select>
                                     </div>
                                 </div>
+                                @if($errors->any())
+                                    <h4 class="alert alert-danger">{{$errors->first()}}</h4>
+                                @endif
                             </div>
                         @endif
-                        <button type="submit" class="btn btn-primary" style="width: 150px"> ОК</button>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;"> ОК</button>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="float: right; margin-bottom: 10px;">
+                        <a href="/export" id="export" class="btn btn-success" style="width: 100%">Create Excel</a>
+                        </div>
+                        </div>
                     </form>
+
                 </div>
 
                 <div class="col-md-9 main-content">
@@ -228,6 +239,7 @@
             </div>
         </div>
     </div>
+</div>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
     <script type="text/javascript" src="./js/ajaxRequests.js"></script>

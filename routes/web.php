@@ -13,6 +13,8 @@
 
 Route::get('/', ['uses' => 'Kode_knController@show', 'as' => 'home']);
 
+Route::get('/export', ['uses' => 'ExportController@export', 'as' => 'home']);
+
 Route::post('/', ['uses' => 'Kode_knController@getDataKodeKN']);
 
 Route::auth();
