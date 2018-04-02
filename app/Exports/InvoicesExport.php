@@ -17,6 +17,7 @@ use App\Helpers\{
 
 class InvoicesExport implements FromView
 {
+
     /**
      * @var array
      */
@@ -122,7 +123,7 @@ class InvoicesExport implements FromView
 
         }
 
-        if (count($dataForTable) >= 55000) {
+        if (count($dataForTable) >= 50000) {
             $this->data = [
                 'errors' => 'Data limit is limited'
             ];

@@ -10,6 +10,10 @@ class Srok extends Model
     protected $table = 'srok';
     protected $date;
 
+    /**
+     * Srok constructor.
+     * @param $date
+     */
     public function __construct($date)
     {
         $this->date = $date;
@@ -49,7 +53,8 @@ class Srok extends Model
             ->orderBy('CAT_STATION.OBL_ID', 'asc')
             ->orderBy('CAT_STATION.IND_ST')
             ->whereIn('srok.SROK_CH', $strok)
-            ->whereBetween('DATE_CH', $this->date)->forPage($page, PER_PAGE)
+            ->whereBetween('DATE_CH', $this->date)
+            ->forPage($page, PER_PAGE)
             ->get();
 
         return $srok;
@@ -100,7 +105,8 @@ class Srok extends Model
     }
 
     /**
-     * @param array $regionName
+     * @param array $stationName
+     * @param array $strok
      * @return int
      */
     function getCountStrStation(array $stationName, array $strok)
@@ -119,7 +125,8 @@ class Srok extends Model
     }
 
     /**
-     * @param array $regionName
+     * @param array $stationName
+     * @param array $strok
      * @param int $page
      * @return \Illuminate\Support\Collection
      */
@@ -139,7 +146,12 @@ class Srok extends Model
         return $srok;
     }
 
-
+    /**
+     * @param array $regionName
+     * @param array $stationName
+     * @param array $strok
+     * @return int
+     */
     function getCountStrRegionStation(array $regionName, array $stationName, array $strok)
     {
         $count = DB::table('CAT_STATION')
@@ -156,8 +168,14 @@ class Srok extends Model
         return $count;
     }
 
-    public
-    function getRegionStationData(array $regionName, array $stationName, array $strok, int $page)
+    /**
+     * @param array $regionName
+     * @param array $stationName
+     * @param array $strok
+     * @param int $page
+     * @return \Illuminate\Support\Collection
+     */
+    public function getRegionStationData(array $regionName, array $stationName, array $strok, int $page)
     {
 
         $srok = DB::table('CAT_STATION')
@@ -175,8 +193,7 @@ class Srok extends Model
         return $srok;
     }
 
-    public
-    function __destruct()
+    public function __destruct()
     {
         $this->date;
         $this->table;
