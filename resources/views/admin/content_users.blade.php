@@ -1,6 +1,5 @@
-
 <div class="container-fluid">
-    <div class="panel panel-defaul">
+    <div class="panel panel-primary">
         <div class="panel-body">
 
             <div class="row">
@@ -25,7 +24,7 @@
                                         @endphp
                                     @else
                                         @php
-                                            $users[$i]->admin = "-"
+                                            $users[$i]->admin = "Гість"
                                         @endphp
                                     @endif
                                     @php
@@ -44,6 +43,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <a href="{!! url('register') !!}" class="btn btn-primary btn-sm">Зареєструвати нового користувача</a>
                 </div>
             </div>
         </div>

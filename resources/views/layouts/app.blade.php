@@ -57,7 +57,7 @@
                             <ul class="dropdown-menu">
                                 @if(Auth::user()->IsAdmin())
                                     <li>
-                                        <a href="/register">Register new user</a>
+                                        <a href="{!! url('/admin') !!}">Admin panel</a>
                                     </li>
                                 @endif
                                 <li>

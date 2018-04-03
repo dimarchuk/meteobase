@@ -18,7 +18,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
     /**
      * /admin/edit/user/{id}
      */
-    Route::match(['get', 'post'],'/edit/user/{id}', ['uses' => 'UsersController@edit']);
+    Route::match(['get', 'post',], '/edit/user/{id}', ['uses' => 'UsersController@edit']);
+//    Route::get( '/edit/user/{id}', ['uses' => 'UsersController@edit']);
+//    Route::post('/edit/user/{id}', ['uses' => 'UsersController@edit']);
 
     /**
      * /admin/delete/user/{id}
