@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use DB;
+use function MongoDB\BSON\toJSON;
 
 class UsersController extends Controller
 {
@@ -27,7 +28,8 @@ class UsersController extends Controller
             $data = [
                 'user' => $selectedUser[0]
             ];
-            return view('admin.user_edit', $data);
+//            return view('admin.user_edit', $data);
+            return response(json_encode($data), 200);
         }
     }
 

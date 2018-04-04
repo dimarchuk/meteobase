@@ -13,6 +13,10 @@
     <!-- Styles -->
     <link type="text/css" href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -83,6 +87,8 @@
 </div>
 
 <!-- Scripts -->
+
 <script src="{{ asset('js/app.js')}}"></script>
+<script type="text/javascript" src="{{ asset('js/adminAjaxRequests.js') }}"></script>
 </body>
 </html>

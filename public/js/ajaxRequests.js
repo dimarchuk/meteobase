@@ -64,7 +64,7 @@ $(document).ready(function () {
             }
         });
     });
-    getGroup9();
+        getGroup9();
 });
 
 function getSelectedPage(page) {
@@ -104,7 +104,6 @@ function getGroup9() {
 
             $('#group9').remove();
 
-            console.log(response.length);
             if (response.length != 0) {
                 var content = ' <table id="group9" class="table table-condensed table-striped"><caption>9 Група</caption><thead><tr><th>Явища</th><th>Значення</th></tr></thead><tbody>';
 

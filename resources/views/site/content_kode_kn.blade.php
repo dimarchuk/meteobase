@@ -180,7 +180,7 @@
 
                 <div class="col-md-9 main-content">
                     <div class="table-responsive">
-                        <table class="table table-condensed table-striped">
+                        <table id="KN" class="table table-condensed table-striped">
                             <thead>
                             <tr>
                                 @foreach($categories as $category)
@@ -240,7 +240,5 @@
         </div>
     </div>
 </div>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
-    <script type="text/javascript" src="./js/ajaxRequests.js"></script>
-    <script type="text/javascript" src="./js/filters.js"></script>
+<script type="text/javascript" src="./js/filters.js"></script>
+<script type="text/javascript" src="./js/ajaxRequests.js"></script>

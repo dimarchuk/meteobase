@@ -44,3 +44,149 @@
 .table td, .table th {
     min-width: 100px;
 }
+
+
+
+
+
+
+
+.pgl-modal-show{
+    cursor: pointer;
+    font-family: 'Arial';
+    font-weight: bold;
+    padding: 15px 10px;
+    padding-bottom: 12px;
+    border-radius: 4px;
+    background: #ccc;
+    text-align: center;
+    display: block;
+    width: 160px;
+    margin: 50px auto !important;
+    margin-top: calc(50% - 20px);
+    transition: .4s;
+}
+
+.pgl-modal-show:hover{
+    background: #b5b5f5;
+}
+
+body{
+    background: #eee;
+    padding: 20px !important;
+}
+
+.pgl-overlay{
+    display: none;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    opacity: 0;
+    transition: 300ms ease-out 100ms;
+
+    background: rgba(0,0,0,0.7);
+    z-index: 9998;
+}
+.pgl-overlay.pgl-show{
+    opacity: 1;
+}
+
+.pgl-modal{
+    position: fixed;
+    top: 50px;
+    left: calc(50% - 250px);
+    z-index: 9999;
+
+    width: 500px;
+    background: #fff;
+    border-radius: 4px;
+
+    font-family: 'Arial';
+    font-size: 16px;
+
+    display: none;
+    transform-origin: 0 0 0 0;
+    opacity: 0;
+    transform: translatey(0px) scale(0.5);
+    transition: 0ms ease-out 150ms;
+}
+.pgl-modal.pgl-show{
+    opacity: 1;
+    transform: translatey(0px) scale(1);
+}
+
+
+.pgl-modal > div{
+    padding: 20px 30px;
+}
+.pgl-modal p{
+    margin: 0 0 20px;
+}
+
+
+.pgl-modal-close{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+    width: 24px;
+    text-align: center;
+    font-size: 26px;
+    transform: scaleY(.8);
+}
+.pgl-modal-close:hover{
+    color: #E53935;
+}
+
+
+.pgl-modal .pgl-modal-header{
+    padding-bottom: 0px;
+    padding-top: 30px;
+}
+.pgl-modal-header h3{
+    margin: 0;
+    text-align: center;
+}
+
+
+.pgl-modal-footer{
+    text-align: right;
+}
+.pgl-modal .pgl-modal-footer{
+    padding-top: 0px;
+}
+
+
+
+
+.pgl-modal .pgl-modal-btn{
+    display: inline-block;
+    padding: 0 20px;
+    background: #ccc;
+    line-height: 36px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: 300ms ease-out 50ms;
+    margin-left: 10px;
+}
+.pgl-modal .pgl-modal-btn:hover{
+    background: #c5c5c5;
+}
+
+.pgl-modal .pgl-modal-btn.pgl-btn-green{
+    color: #fff;
+    background: #24CB8C;
+}
+.pgl-modal .pgl-modal-btn.pgl-btn-green:hover{
+    background: #0FB365;
+}
+
+.pgl-modal .pgl-modal-btn.pgl-btn-red{
+    color: #fff;
+    background: #F44336;
+}
+.pgl-modal .pgl-modal-btn.pgl-btn-red:hover{
+    background: #E53935;
+}
