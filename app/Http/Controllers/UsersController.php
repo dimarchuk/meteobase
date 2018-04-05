@@ -25,11 +25,11 @@ class UsersController extends Controller
             $col = ['id', 'name', 'email', 'admin'];
             $selectedUser = User::select($col)->where('id', '=', $userId)->get();
 
-            $data = [
-                'user' => $selectedUser[0]
-            ];
-//            return view('admin.user_edit', $data);
-            return response(json_encode($data), 200);
+
+                $user = $selectedUser[0];
+
+
+            return response(json_encode($user), 200);
         }
     }
 

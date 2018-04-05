@@ -14,10 +14,10 @@ $(document).ready(function () {
 
                 console.log(json);
 
-                $('#userName').val(json.user.name);
-                $('#userEmail').val(json.user.email);
+                $('#userName').val(json.name);
+                $('#userEmail').val(json.email);
 
-                if (json.user.admin == true) {
+                if (json.admin == true) {
                     $('#gridRadios1').prop('checked', true);
                 } else $('#gridRadios2').prop('checked', true);
 
