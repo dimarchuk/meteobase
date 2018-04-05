@@ -18,11 +18,13 @@ class UsersController extends Controller
         if ($request->isMethod('POST')) {
 
             parse_str($_POST['data'], $data);
+
             User::where('id', $userId)->update(['name' => $data['userName'], 'email' => $data['userEmail'], 'admin' => $data['gridRadios']]);
-//            return redirect('admin');
+
             return response()->json([
                 'message' => 'success'
             ], 200);
+
 
         } else if ($request->isMethod('GET')) {
 
