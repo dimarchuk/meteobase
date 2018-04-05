@@ -1,7 +1,15 @@
 <?php
 
+/**
+ * kode KN-01
+ */
 Route::get('/', ['uses' => 'Kode_knController@show', 'as' => 'home']);
 Route::post('/', ['uses' => 'Kode_knController@getDataKodeKN']);
+
+/**
+ * WAREP
+ */
+Route::get('/warep', ['uses' => 'WarepController@show']);
 
 Route::get('/export', ['uses' => 'ExportController@export', 'as' => 'export']);
 

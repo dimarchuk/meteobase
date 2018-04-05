@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <nav class="my-navbar">
                     <ul>
-                        <li><a href="{{url('/')}}">КC-01(строковий)</a></li>
+                        <li><a href="{!! url('/')!!}">КC-01(строковий)</a></li>
                         <li><a href="#">Warep</a></li>
                         <li><a href="#">КC-01(добовий)</a></li>
                         <li><a href="#">Дані за місяць</a></li>
