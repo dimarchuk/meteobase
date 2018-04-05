@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use DB;
-use function MongoDB\BSON\toJSON;
 
 class UsersController extends Controller
 {
@@ -17,8 +16,13 @@ class UsersController extends Controller
     public function edit(Request $request, int $userId)
     {
         if ($request->isMethod('POST')) {
-            User::where('id', $userId)->update(['name' => $_POST['userName'], 'email' => $_POST['userEmail'], 'admin' => $_POST['gridRadios']]);
-            return redirect('admin');
+
+            parse_str($_POST['data'], $data);
+            User::where('id', $userId)->update(['name' => $data['userName'], 'email' => $data['userEmail'], 'admin' => $data['gridRadios']]);
+//            return redirect('admin');
+            return response()->json([
+                'message' => 'success'
+            ], 200);
 
         } else if ($request->isMethod('GET')) {
 
@@ -26,7 +30,7 @@ class UsersController extends Controller
             $selectedUser = User::select($col)->where('id', '=', $userId)->get();
 
 
-                $user = $selectedUser[0];
+            $user = $selectedUser[0];
 
 
             return response(json_encode($user), 200);

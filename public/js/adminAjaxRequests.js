@@ -1,4 +1,8 @@
 $(document).ready(function () {
+    getEditForm();
+});
+
+function getEditForm() {
 
     /**
      * Edit user name, email, status
@@ -13,23 +17,23 @@ $(document).ready(function () {
             type: 'GET',
             url: url,
             dataType: 'json',
-            success: function (json) {
+            success: function (user) {
 
-                $('#userName').val(json.name);
-                $('#userEmail').val(json.email);
+                //set data on form
+                $('form').attr('action', '/admin/edit/user/' + user.id);
+                $('#userName').val(user.name);
+                $('#userEmail').val(user.email);
 
-                if (true == json.admin) {
+                if (true == user.admin) {
                     $('#gridRadios1').prop('checked', true);
                 } else $('#gridRadios2').prop('checked', true);
 
                 //show edit form
                 $('.pgl-modal').pglModal({'duration': 300});
-
             }
         });
     });
-
-});
+}
 
 /**
  * @param options
@@ -47,7 +51,6 @@ $.fn.pglModal = function (options) {
     return this.each(function () {
 
         var $elem = $(this),
-            $submit = $elem.find('.form-submit'),
             $close = $elem.find('.pgl-modal-close');
 
 
@@ -74,9 +77,10 @@ $.fn.pglModal = function (options) {
             }, 100);
 
             //submit
-            $submit.on('click', function (event) {
+            $('form').submit(function (event) {
                 event.preventDefault();
-
+                var $that = $(this);
+                updateUser($that);
                 hide();
             });
 
@@ -101,7 +105,24 @@ $.fn.pglModal = function (options) {
         };
 
         $elem.init();
-
     });
-
 };
+
+function updateUser(form) {
+    fData = form.serialize();
+
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: {data: fData},
+        dataType: 'json',
+        success: function (response) {
+            location.reload();
+
+            if(response.message === 'success') {
+                alert('Дані оновлено');
+            }
+        }
+    });
+}
