@@ -1,5 +1,8 @@
 $(document).ready(function () {
 
+    /**
+     * Edit user name, email, status
+     */
     $('.edit').on('click', function (event) {
         event.preventDefault();
 
@@ -12,16 +15,15 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (json) {
 
-                console.log(json);
-
                 $('#userName').val(json.name);
                 $('#userEmail').val(json.email);
 
-                if (json.admin == true) {
+                if (true == json.admin) {
                     $('#gridRadios1').prop('checked', true);
                 } else $('#gridRadios2').prop('checked', true);
 
-               console.log( $('.pgl-modal').pglModal({'duration': 300}));
+                //show edit form
+                $('.pgl-modal').pglModal({'duration': 300});
 
             }
         });
@@ -29,11 +31,15 @@ $(document).ready(function () {
 
 });
 
+/**
+ * @param options
+ * @returns {*}
+ */
 $.fn.pglModal = function (options) {
 
     var defaults = {
         duration: 300, // animation show/hide duration
-        varticalAlign: true, // Align middle
+        varticalAlign: true // Align middle
     };
 
     var settings = $.extend({}, defaults, options);
@@ -70,17 +76,15 @@ $.fn.pglModal = function (options) {
             //submit
             $submit.on('click', function (event) {
                 event.preventDefault();
-                console.log("ок");
-                //hide
-                close();
+
+                hide();
             });
 
-            //hide
             $close.on('click', function () {
-                close();
+                hide();
             });
 
-            function close() {
+            function hide() {
                 setTimeout(function () {
                     $elem.add('.pgl-overlay').css('display', 'none');
                 }, settings.duration + 150);
