@@ -32,7 +32,7 @@ $(document).ready(function () {
 
                 $('.sections-wrapper').append(select);
 
-                multiSelect('#stations-select');
+                // multiSelect('#stations-select');
 
             }
         });

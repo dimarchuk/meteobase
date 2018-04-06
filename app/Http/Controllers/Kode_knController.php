@@ -41,9 +41,9 @@ class Kode_knController extends Controller
 
         $uId = Auth::getUser()->getAuthIdentifier();
 
-        if (DB::table('user_categories')->where('user_id', $uId)->exists()) {
+        if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKN')->exists()) {
 
-            $selectedFilters = UserCategory::all()->where('user_id', '=', $uId)->first();
+            $selectedFilters = UserCategory::all()->where('user_id', '=', $uId)->where('page', 'kodeKN')->first();
 
             parse_str($selectedFilters->categories_list, $selectedFilters);
 
@@ -212,7 +212,7 @@ class Kode_knController extends Controller
                      * Save selected filters
                      */
                     $uId = Auth::getUser()->getAuthIdentifier();
-                    if (DB::table('user_categories')->where('user_id', $uId)->exists()) {
+                    if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKN')->exists()) {
                         DB::table('user_categories')->where('user_id', $uId)->update(
                             ['categories_list' => $_POST['data']]
                         );
