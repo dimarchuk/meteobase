@@ -41,12 +41,28 @@
                                 <div class="col-sm-7">
                                     <select id="storm-select" class="form-control" name="storm" size="1">
                                         <option value="All">STORM & AVIA</option>
-                                        <option value="STORM">STORM</option>
-                                        <option value="AVIA">AVIA</option>
+                                        <option value="1">STORM</option>
+                                        <option value="2">AVIA</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
+
+                        @if(isset($appearances) && is_object($appearances))
+                            <div id="appearance" class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-5" style="margin-top: 6px;"> Виберіть явище:</div>
+                                    <div class="col-sm-7">
+                                        <select id="appearance-select" class="form-control" name="appearance" size="1">
+                                            <option value="All">Всі явища</option>
+                                            @foreach($appearances as $appearance)
+                                                <option value="{{ $appearance->CODE_WAREP }}">{{ $appearance->CWCW }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
 
                         @if(isset($regions) && is_object($regions))
                             <div id="regions" class="form-group">
@@ -69,7 +85,6 @@
                                                                 echo "<option value=\"{$region->OBL_ID}\">{$region->NAME_OBL}</option>"?>
                                                             @endphp
                                                         @endif
-
                                                     @else
                                                         @php
                                                             echo "<option value=\"{$region->OBL_ID}\">{$region->NAME_OBL}</option>"?>
@@ -113,59 +128,15 @@
                             </div>
                         @endif
 
-                        {{--@if(isset($categories) && is_object($categories))--}}
-                            {{--<div id="categories" class="form-group">--}}
-                                {{--<label>Виберіть дані:</label>--}}
-                                {{--<div class="row">--}}
-                                    {{--<div class="col-sm-12">--}}
-                                        {{--<select id="categories-select" class="form-control" name="collumns[]" size="9"--}}
-                                                {{--multiple>--}}
-                                            {{--@foreach($categories as $category)--}}
-                                                {{--@if(isset($selectedCategories))--}}
-                                                    {{--@if($category->code_col_name == 'NAME_OBL' || $category->code_col_name == 'NAME_ST'--}}
-                                                    {{--|| $category->code_col_name == 'IND_ST'|| $category->code_col_name == 'DATE_CH'--}}
-                                                    {{--|| $category->code_col_name == 'SROK_CH')--}}
-                                                        {{--@php--}}
-                                                            {{--echo "<option disabled value=\"{$category->code_col_name}\">{$category->col_name}</option>"--}}
-                                                        {{--@endphp--}}
-                                                    {{--@else--}}
-                                                        {{--@if(in_array($category->code_col_name, $selectedCategories))--}}
-                                                            {{--@php--}}
-                                                                {{--echo "<option selected value=\"{$category->code_col_name}\">{$category->col_name}</option>"--}}
-                                                            {{--@endphp--}}
-                                                        {{--@else--}}
-                                                            {{--@php--}}
-                                                                {{--echo "<option value=\"{$category->code_col_name}\">{$category->col_name}</option>"--}}
-                                                            {{--@endphp--}}
-                                                        {{--@endif--}}
-                                                    {{--@endif--}}
-
-                                                {{--@else--}}
-                                                    {{--@if($category->selekted_col == true)--}}
-                                                        {{--@php--}}
-                                                            {{--echo "<option selected value=\"{$category->code_col_name}\">{$category->col_name}</option>"--}}
-                                                        {{--@endphp--}}
-                                                    {{--@else--}}
-                                                        {{--@php--}}
-                                                            {{--echo "<option value=\"{$category->code_col_name}\">{$category->col_name}</option>"--}}
-                                                        {{--@endphp--}}
-                                                    {{--@endif--}}
-                                                {{--@endif--}}
-                                            {{--@endforeach--}}
-                                        {{--</select>--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
-                                {{--@if($errors->any())--}}
-                                    {{--<h5 class="alert alert-danger">{{$errors->first()}}</h5>--}}
-                                {{--@endif--}}
-                            {{--</div>--}}
-                        {{--@endif--}}
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;"> ОК</button>
+                                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">
+                                    ОК
+                                </button>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="float: right; margin-bottom: 10px;">
-                                <a href="/export" id="export" class="btn btn-success" style="width: 100%">Create Excel</a>
+                                <a href="/export" id="export" class="btn btn-success" style="width: 100%">Create
+                                    Excel</a>
                             </div>
                         </div>
                     </form>
@@ -173,22 +144,44 @@
                 </div>
 
                 <div class="col-md-9 main-content">
-                    <div class="table-responsive">
-                        <table id="KN" class="table table-condensed table-striped">
-                            <thead>
-                            <tr>
+                    @if(isset($dataForTable) && is_object($dataForTable))
+                        <div class="table-responsive">
+                            <table id="warep" class="table table-condensed table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Назва області</th>
+                                    <th>Назва станції</th>
+                                    <th>Індекс</th>
+                                    <th>Дата</th>
+                                    <th>Час</th>
+                                    <th>Шторм</th>
+                                    <th>Код групи</th>
+                                    <th>Явище</th>
+                                    <th>Код явища</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($dataForTable as $item)
+                                    <tr>
+                                        <td>{{$item->NAME_OBL}}</td>
+                                        <td>{{$item->NAME_ST}}</td>
+                                        <td>{{$item->IND_ST}}</td>
+                                        <td>{{$item->DATE_CH}}</td>
+                                        <td>{{$item->TIME_HOUR}}:{{ $item->TIME_MIN }}</td>
+                                        <td>{{$item->STORM_AVIA}}</td>
+                                        <td>{{$item->CODGROUP}}</td>
+                                        <td>{{$item->HENOTYP_DECODE}}</td>
+                                        <td>{{$item->CODPHENOTYP}}</td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <ul class="pagination">
 
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <ul class="pagination">
-
-                    </ul>
+                        </ul>
                 </div>
+                @endif
             </div>
         </div>
     </div>

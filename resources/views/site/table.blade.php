@@ -10,7 +10,7 @@
         </tr>
         </thead>
         <tbody>
-        @foreach($dataFromSrok as $item)
+        @foreach($dataForTable as $item)
             <tr>
                 @foreach($categories as $category)
                     @php

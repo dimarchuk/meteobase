@@ -9,7 +9,7 @@ use App\Helpers\{
     Helper, Decode
 };
 use App\{
-    Region, Station, Srok, UserCategory
+    Region, Station, Srok, UserCategory, Warep
 };
 
 
@@ -30,8 +30,10 @@ class WarepController extends Controller
      */
     public function show(Request $request)
     {
+        $helper = new Helper();
         $regions = new Region();
         $stations = new Station();
+        $appearances = DB::table('WEATHER2')->select('CODE_WAREP', 'CWCW')->where('CWCW', '!=', '')->get();
 
         $uId = Auth::getUser()->getAuthIdentifier();
 
@@ -57,9 +59,7 @@ class WarepController extends Controller
             } else if (isset($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
 
 
-
             } else if (empty($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
-
 
 
             } else if (empty($selectedFilters['regionName']) && empty($selectedFilters['stationName'])) {
@@ -81,6 +81,7 @@ class WarepController extends Controller
                 'selectedRegions' => $selectedRegions,
                 'stations' => $stations->getAllStation(),
                 'selectedStations' => $selectesStations,
+                'appearances' => $appearances
 //                'categories' => $categories,
 //                'dataFromSrok' => $dataForTable,
 //                'selectedCategories' => $selectedFilters['collumns'],
@@ -90,16 +91,28 @@ class WarepController extends Controller
         } else {
             //if first auth
             $currentDate = Date('Y-m-d');
+            $warep = new Warep([$currentDate, $currentDate]);
+
 
             $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+            $dataForTable = $warep->getBasicData($currentPage);
 
+            foreach ($dataForTable as $item) {
+                if ($item->STORM_AVIA === 1) {
+                    $item->STORM_AVIA = 'STORM';
+                } else $item->STORM_AVIA = 'AVIA';
+                foreach ($appearances as $appearance) {
+                    if ($item->CODPHENOTYP === $appearance->CODE_WAREP)
+                    $item->HENOTYP_DECODE = $appearance->CWCW;
+                    }
+            }
+            var_dump($dataForTable);
 
             /**
              * Create pagination links
              */
-//            $countPages = ceil($srok->getCountStrBasic() / PER_PAGE);
-//            $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
-//
+            $countPages = ceil($warep->getCountStrBasic() / PER_PAGE);
+            $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
 
             /**
              * array with all data for view
@@ -107,8 +120,8 @@ class WarepController extends Controller
             $data = [
                 'regions' => $regions->getAllRegions(),
                 'stations' => $stations->getAllStation(),
-//                'categories' => $categories,
-//                'dataFromSrok' => $dataForTable,
+                'appearances' => $appearances,
+                'dataForTable' => $dataForTable,
 //                'selectedCategories' => $selectedCategories,
 //                'paginationLinks' => $paginationLinks
             ];

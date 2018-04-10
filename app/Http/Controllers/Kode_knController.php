@@ -106,7 +106,7 @@ class Kode_knController extends Controller
                 'stations' => $stations->getAllStation(),
                 'selectedStations' => $selectesStations,
                 'categories' => $categories,
-                'dataFromSrok' => $dataForTable,
+                'dataForTable' => $dataForTable,
                 'selectedCategories' => $selectedFilters['collumns'],
                 'paginationLinks' => $paginationLinks
             ];
@@ -151,7 +151,7 @@ class Kode_knController extends Controller
                 'regions' => $regions->getAllRegions(),
                 'stations' => $stations->getAllStation(),
                 'categories' => $categories,
-                'dataFromSrok' => $dataForTable,
+                'dataForTable' => $dataForTable,
                 'selectedCategories' => $selectedCategories,
                 'paginationLinks' => $paginationLinks
             ];
@@ -256,7 +256,7 @@ class Kode_knController extends Controller
 
                     $dataOut = [
                         'categories' => $categories,
-                        'dataFromSrok' => $dataForTable,
+                        'dataForTable' => $dataForTable,
                         'countPages' => $countPages,
                         'currentPage' => $currentPage,
                         'paginationLinks' => $paginationLinks,

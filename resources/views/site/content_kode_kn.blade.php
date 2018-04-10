@@ -203,7 +203,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($dataFromSrok as $item)
+                            @foreach($dataForTable as $item)
                                 <tr>
                                     @foreach($selectedCategories as $selectedCategory)
                                         @if($selectedCategory == 'A' || $selectedCategory == 'WW' || $selectedCategory == 'W1'

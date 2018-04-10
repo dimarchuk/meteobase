@@ -59,22 +59,27 @@ $(document).ready(function () {
                     getSelectedPage(currentPage);
                     event.preventDefault();
                 });
-
-                getGroup9();
+                if (location.pathname === '/'){
+                    getGroup9();
+                }
 
             }
         });
     });
+
+    if (location.pathname === '/'){
         getGroup9();
+    }
 });
 
 function getSelectedPage(page) {
 
     var fData = $('form').serialize() + "&requestName=selectInfoForTable" + "&page=" + page;
+
     $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         type: 'POST',
-        url: '/',
+        url: location.pathname,
         data: {data: fData},
         dataType: 'html'
     }).done(function (view) {
@@ -94,7 +99,6 @@ function getGroup9() {
     $("tr").on('click', function (event) {
         var selectedRow = $(this).children("td");
         var data = "id=" + selectedRow[2].textContent + "&date=" + selectedRow[3].textContent + "&srok=" + selectedRow[4].textContent + "&requestName=selectGroup9";
-
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             type: 'POST',
