@@ -196,6 +196,5 @@ class Srok extends Model
     public function __destruct()
     {
         $this->date;
-        $this->table;
     }
 }

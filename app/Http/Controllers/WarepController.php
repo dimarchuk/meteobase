@@ -33,7 +33,13 @@ class WarepController extends Controller
         $helper = new Helper();
         $regions = new Region();
         $stations = new Station();
+
         $appearances = DB::table('WEATHER2')->select('CODE_WAREP', 'CWCW')->where('CWCW', '!=', '')->get();
+
+        $appear = [];
+        foreach ($appearances as $appearance) {
+            $appear[] = $appearance->CODE_WAREP;
+        }
 
         $uId = Auth::getUser()->getAuthIdentifier();
 
@@ -47,6 +53,10 @@ class WarepController extends Controller
             $selectesStations = isset($selectedFilters['stationName']) ? $selectedFilters['stationName'] : null;
 
             $currentDate = Date('Y-m-d');
+            $warep = new Warep([$currentDate, $currentDate]);
+
+            $storm = ($selectedFilters['storm'] == 'All') ? [1, 2] : [(int)$selectedFilters['storm']];
+            $appearance = ($selectedFilters['appearance'] == 'All') ? $appear : [(int)$selectedFilters['appearance']];
 
             $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
 
@@ -54,38 +64,46 @@ class WarepController extends Controller
              * Data filtering
              */
             if (isset($selectedFilters['regionName']) && empty($selectedFilters['stationName'])) {
-
+                $countStr = $warep->getCountStrRegion($selectedFilters['regionName'], $storm, $appearance);
+                $dataForTable = $warep->getRegionData($selectedFilters['regionName'], $storm, $appearance, $currentPage);
 
             } else if (isset($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
-
+                $countStr = $warep->getCountStrRegionStation($selectedFilters['regionName'], $selectedFilters['stationName'], $storm, $appearance);
+                $dataForTable = $warep->getRegionStationData($selectedFilters['regionName'], $selectedFilters['stationName'], $storm, $appearance, $currentPage);
 
             } else if (empty($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
-
+                $countStr = $warep->getCountStrStation($selectedFilters['stationName'], $storm, $appearance);
+                $dataForTable = $warep->getStationData($selectedFilters['stationName'], $storm, $appearance, $currentPage);
 
             } else if (empty($selectedFilters['regionName']) && empty($selectedFilters['stationName'])) {
-
-
+                $countStr = $warep->getCountStrBasic($storm, $appearance);
+                $dataForTable = $warep->getBasicData($currentPage, $storm, $appearance);
             }
 
-//            $countPages = ceil($countStr / PER_PAGE);
+            $countPages = ceil($countStr / PER_PAGE);
 
-//            $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/'),
-//                $countPages, $currentPage, true) : "";
+            $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/warep'),
+                $countPages, $currentPage, true) : "";
 
-
+var_dump($dataForTable);
+            foreach ($dataForTable as $item) {
+                if ($item->STORM_AVIA === 1) {
+                    $item->STORM_AVIA = 'STORM';
+                } else $item->STORM_AVIA = 'AVIA';
+                foreach ($appearances as $appearance) {
+                    if ($item->CODPHENOTYP === $appearance->CODE_WAREP)
+                        $item->HENOTYP_DECODE = $appearance->CWCW;
+                }
+            }
             /**
              * array with all data for view
              */
             $data = [
                 'regions' => $regions->getAllRegions(),
-                'selectedRegions' => $selectedRegions,
                 'stations' => $stations->getAllStation(),
-                'selectedStations' => $selectesStations,
-                'appearances' => $appearances
-//                'categories' => $categories,
-//                'dataFromSrok' => $dataForTable,
-//                'selectedCategories' => $selectedFilters['collumns'],
-//                'paginationLinks' => $paginationLinks
+                'appearances' => $appearances,
+                'dataForTable' => $dataForTable,
+                'paginationLinks' => $paginationLinks
             ];
 
         } else {
@@ -93,9 +111,8 @@ class WarepController extends Controller
             $currentDate = Date('Y-m-d');
             $warep = new Warep([$currentDate, $currentDate]);
 
-
             $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-            $dataForTable = $warep->getBasicData($currentPage);
+            $dataForTable = $warep->getBasicData($currentPage, [1,2], $appear);
 
             foreach ($dataForTable as $item) {
                 if ($item->STORM_AVIA === 1) {
@@ -103,16 +120,15 @@ class WarepController extends Controller
                 } else $item->STORM_AVIA = 'AVIA';
                 foreach ($appearances as $appearance) {
                     if ($item->CODPHENOTYP === $appearance->CODE_WAREP)
-                    $item->HENOTYP_DECODE = $appearance->CWCW;
-                    }
+                        $item->HENOTYP_DECODE = $appearance->CWCW;
+                }
             }
-            var_dump($dataForTable);
 
             /**
              * Create pagination links
              */
-            $countPages = ceil($warep->getCountStrBasic() / PER_PAGE);
-            $paginationLinks = $helper->generateLinksForPagination(url('/'), $countPages, $currentPage, true);
+            $countPages = ceil($warep->getCountStrBasic([1,2], $appear) / PER_PAGE);
+            $paginationLinks = $helper->generateLinksForPagination(url('/warep'), $countPages, $currentPage, true);
 
             /**
              * array with all data for view
@@ -122,12 +138,96 @@ class WarepController extends Controller
                 'stations' => $stations->getAllStation(),
                 'appearances' => $appearances,
                 'dataForTable' => $dataForTable,
-//                'selectedCategories' => $selectedCategories,
-//                'paginationLinks' => $paginationLinks
+                'paginationLinks' => $paginationLinks
             ];
         }
 
 
         return view('site.warep.warep', $data);
+    }
+
+    public function getDataWarep()
+    {
+        $helper = new Helper();
+        $appearances = DB::table('WEATHER2')->select('CODE_WAREP', 'CWCW')->where('CWCW', '!=', '')->get();
+
+        $appear = [];
+        foreach ($appearances as $appearance) {
+            $appear[] = $appearance->CODE_WAREP;
+        }
+
+        parse_str($_POST['data'], $data);
+
+        $ajaxIdentification = $data['requestName'];
+
+        switch ($ajaxIdentification) {
+
+            case "selectInfoForTable":
+                {
+                    $currentPage = isset($data['page']) ? $data['page'] : 1;
+                    $warep = new Warep([$data['dateFrom'], $data['dateTo']]);
+
+                    $storm = ($data['storm'] == 'All') ? [1, 2] : [(int)$data['storm']];
+                    $appearance = ($data['appearance'] == 'All') ? $appear : [(int)$data['appearance']];
+
+                    /**
+                     * Save selected filters
+                     */
+                    $uId = Auth::getUser()->getAuthIdentifier();
+                    if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'warep')->exists()) {
+                        DB::table('user_categories')->where('user_id', $uId)->where('page', 'warep')->update(
+                            ['categories_list' => $_POST['data']]
+                        );
+                    } else {
+                        DB::table('user_categories')->where('user_id', $uId)->insert(
+                            ['user_id' => $uId, 'page' => 'warep', 'categories_list' => $_POST['data']]
+                        );
+                    }
+
+
+                    /**
+                     * Data filtering
+                     */
+                    if (isset($data['regionName']) && empty($data['stationName'])) {
+                        $countStr = $warep->getCountStrRegion($data['regionName'], $storm, $appearance);
+                        $dataForTable = $warep->getRegionData($data['regionName'], $storm, $appearance, $currentPage);
+
+                    } else if (isset($data['regionName']) && isset($data['stationName'])) {
+                        $countStr = $warep->getCountStrRegionStation($data['regionName'], $data['stationName'], $storm, $appearance);
+                        $dataForTable = $warep->getRegionStationData($data['regionName'], $data['stationName'], $storm, $appearance, $currentPage);
+
+                    } else if (empty($data['regionName']) && isset($data['stationName'])) {
+                        $countStr = $warep->getCountStrStation($data['stationName'], $storm, $appearance);
+                        $dataForTable = $warep->getStationData($data['stationName'], $storm, $appearance, $currentPage);
+
+                    } else if (empty($data['regionName']) && empty($data['stationName'])) {
+                        $countStr = $warep->getCountStrBasic($storm, $appearance);
+                        $dataForTable = $warep->getBasicData($currentPage, $storm, $appearance);
+                    }
+
+                    foreach ($dataForTable as $item) {
+                        if ($item->STORM_AVIA === 1) {
+                            $item->STORM_AVIA = 'STORM';
+                        } else $item->STORM_AVIA = 'AVIA';
+                        foreach ($appearances as $appearance) {
+                            if ($item->CODPHENOTYP === $appearance->CODE_WAREP)
+                                $item->HENOTYP_DECODE = $appearance->CWCW;
+                        }
+                    }
+
+                    $countPages = ceil($countStr / PER_PAGE);
+                    $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/warep'), $countPages, $currentPage, true) : "";
+
+                    $dataOut = [
+                        'dataForTable' => $dataForTable,
+                        'paginationLinks' => $paginationLinks,
+                    ];
+
+//                    return response($dataForTable, 200);
+                    return view('site.warep.table', $dataOut);
+                    break;
+                }
+        }
+
     }
 }

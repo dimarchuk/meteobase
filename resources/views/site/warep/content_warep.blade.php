@@ -178,7 +178,9 @@
                             </table>
                         </div>
                         <ul class="pagination">
-
+                            @php
+                                echo $paginationLinks;
+                            @endphp
                         </ul>
                 </div>
                 @endif

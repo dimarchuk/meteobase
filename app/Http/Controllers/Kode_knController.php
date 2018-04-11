@@ -213,12 +213,12 @@ class Kode_knController extends Controller
                      */
                     $uId = Auth::getUser()->getAuthIdentifier();
                     if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKN')->exists()) {
-                        DB::table('user_categories')->where('user_id', $uId)->update(
+                        DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKN')->update(
                             ['categories_list' => $_POST['data']]
                         );
                     } else {
                         DB::table('user_categories')->where('user_id', $uId)->insert(
-                            ['user_id' => $uId, 'categories_list' => $_POST['data']]
+                            ['user_id' => $uId, 'page'=>'kodeKN', 'categories_list' => $_POST['data']]
                         );
                     }
 

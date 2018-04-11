@@ -42,7 +42,6 @@ $(document).ready(function () {
         event.preventDefault();
         var $that = $(this),
             fData = $that.serialize() + "&requestName=selectInfoForTable";
-
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             type: $that.attr('method'),
