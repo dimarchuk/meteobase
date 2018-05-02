@@ -1,5 +1,7 @@
 $(document).ready(function () {
 
+    var path = location.pathname;
+
     $('#regions').on('click', function (event) {
         // event.preventDefault();
         var regions_serialize = $('#regions-select').serialize() + "&requestName=selectStation";
@@ -54,24 +56,24 @@ $(document).ready(function () {
                 $('.main-content').html(view);
 
                 $(document).on('click', '.pagination a', function (event) {
-                    var currentPage = $(this).attr('href').split('page=')[1];
-                    getSelectedPage(currentPage);
                     event.preventDefault();
+                    var currentPage = $(this).attr('href').split('page=')[1];
+                    getSelectedPage(currentPage, path);
                 });
-                if (location.pathname === '/'){
-                    getGroup9();
-                }
+
+                if (path === '/') getGroup9();
+                else if (path === '/warep') getStrings();
 
             }
         });
     });
 
-    if (location.pathname === '/'){
-        getGroup9();
-    }
+
+    if (path === '/') getGroup9();
+    else if (path === '/warep') getStrings();
 });
 
-function getSelectedPage(page) {
+function getSelectedPage(page, path) {
 
     var fData = $('form').serialize() + "&requestName=selectInfoForTable" + "&page=" + page;
 
@@ -86,10 +88,11 @@ function getSelectedPage(page) {
         $('.table-responsive').remove();
         $('.main-content').html(view);
 
+        if (path === '/') getGroup9();
+        else if (path === '/warep') getStrings();
+
     }).fail(function () {
-
         alert('Page could not be loaded.');
-
     });
 }
 
@@ -121,11 +124,27 @@ function getGroup9() {
             }
 
         }).fail(function () {
-
             alert('Group 9 could not be loaded.');
-
         });
 
     });
+}
 
+function getStrings() {
+    $("tr").on('click', function (event) {
+        var selectedRow = $(this).children("td")[6].textContent;
+        var rows = $($("table").find("tbody tr"));
+
+        rows.each(function (index, row) {
+            if (selectedRow === row.children[6].textContent) {
+                $($(row).children("td").splice(9)).css("visibility", "visible");
+                $(row).css("backgroundColor", "#808080").css("color", "#ffffff");
+
+            } else {
+                $(row).css("backgroundColor", "").css("color", "");
+                $($(row).children("td").splice(9)).css("visibility", "hidden")
+
+            }
+        });
+    });
 }

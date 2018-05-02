@@ -218,7 +218,7 @@ class Kode_knController extends Controller
                         );
                     } else {
                         DB::table('user_categories')->where('user_id', $uId)->insert(
-                            ['user_id' => $uId, 'page'=>'kodeKN', 'categories_list' => $_POST['data']]
+                            ['user_id' => $uId, 'page' => 'kodeKN', 'categories_list' => $_POST['data']]
                         );
                     }
 

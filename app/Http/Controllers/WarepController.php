@@ -85,7 +85,6 @@ class WarepController extends Controller
             $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/warep'),
                 $countPages, $currentPage, true) : "";
 
-var_dump($dataForTable);
             foreach ($dataForTable as $item) {
                 if ($item->STORM_AVIA === 1) {
                     $item->STORM_AVIA = 'STORM';
@@ -112,7 +111,7 @@ var_dump($dataForTable);
             $warep = new Warep([$currentDate, $currentDate]);
 
             $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-            $dataForTable = $warep->getBasicData($currentPage, [1,2], $appear);
+            $dataForTable = $warep->getBasicData($currentPage, [1, 2], $appear);
 
             foreach ($dataForTable as $item) {
                 if ($item->STORM_AVIA === 1) {
@@ -127,7 +126,7 @@ var_dump($dataForTable);
             /**
              * Create pagination links
              */
-            $countPages = ceil($warep->getCountStrBasic([1,2], $appear) / PER_PAGE);
+            $countPages = ceil($warep->getCountStrBasic([1, 2], $appear) / PER_PAGE);
             $paginationLinks = $helper->generateLinksForPagination(url('/warep'), $countPages, $currentPage, true);
 
             /**
@@ -141,7 +140,6 @@ var_dump($dataForTable);
                 'paginationLinks' => $paginationLinks
             ];
         }
-
 
         return view('site.warep.warep', $data);
     }
@@ -157,7 +155,6 @@ var_dump($dataForTable);
         }
 
         parse_str($_POST['data'], $data);
-
         $ajaxIdentification = $data['requestName'];
 
         switch ($ajaxIdentification) {
@@ -183,7 +180,6 @@ var_dump($dataForTable);
                             ['user_id' => $uId, 'page' => 'warep', 'categories_list' => $_POST['data']]
                         );
                     }
-
 
                     /**
                      * Data filtering
@@ -223,7 +219,6 @@ var_dump($dataForTable);
                         'paginationLinks' => $paginationLinks,
                     ];
 
-//                    return response($dataForTable, 200);
                     return view('site.warep.table', $dataOut);
                     break;
                 }

@@ -186,7 +186,6 @@ class Srok extends Model
             ->whereIn('CAT_STATION.OBL_ID', $regionName)
             ->whereIn('CAT_STATION.IND_ST', $stationName)
             ->whereIn('srok.SROK_CH', $strok)
-
             ->whereBetween('DATE_CH', $this->date)->forPage($page, PER_PAGE)
             ->get();
 

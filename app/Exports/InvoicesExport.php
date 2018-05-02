@@ -45,7 +45,7 @@ class InvoicesExport implements FromView
 
         if (DB::table('user_categories')->where('user_id', $uId)->exists()) {
 
-            $selectedFilters = UserCategory::all()->where('user_id', '=', $uId)->first();
+            $selectedFilters = UserCategory::all()->where('user_id', '=', $uId)->where('page', '=', 'kodeKN')->first();
 
             parse_str($selectedFilters->categories_list, $selectedFilters);
 

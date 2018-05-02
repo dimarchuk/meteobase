@@ -20,6 +20,8 @@ class Warep extends Model
     }
 
     /**
+     * @param array $storm
+     * @param array $appearance
      * @return int
      */
     function getCountStrBasic(array $storm = [1, 2], array $appearance = [])
@@ -39,6 +41,8 @@ class Warep extends Model
 
     /**
      * @param int $page
+     * @param array $storm
+     * @param array $appearance
      * @return \Illuminate\Support\Collection
      */
     public function getBasicData(int $page, array $storm = [1, 2], array $appearance = [])
@@ -80,9 +84,9 @@ class Warep extends Model
     }
 
     /**
-     * Get data for one page
-     * Date & Region id filtering
      * @param array $regionName
+     * @param array $storm
+     * @param array $appearance
      * @param int $page
      * @return \Illuminate\Support\Collection
      */
