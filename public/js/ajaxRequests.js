@@ -135,6 +135,11 @@ function getStrings() {
         var selectedRow = $(this).children("td")[6].textContent;
         var rows = $($("table").find("tbody tr"));
 
+        var exportURL = $("#export");
+        exportURL[0].href = '/export' + '/' + selectedRow;
+
+        setTableHeaders(selectedRow);
+
         rows.each(function (index, row) {
             if (selectedRow === row.children[6].textContent) {
                 $($(row).children("td").splice(9)).css("visibility", "visible");
@@ -146,5 +151,23 @@ function getStrings() {
 
             }
         });
+    });
+}
+
+function setTableHeaders(numberOfGroup) {
+    var head = $($("table").find("thead tr"));
+    var cols = $($(head[0]).children("th").splice(9));
+    var grups = {
+        0: ['Діам./Товщина, мм', 'Т,°С', 'Показн. явища'],
+        1: ['Напрям вітру', 'Сер. шв вітру', 'Макс. шв. вітру'],
+        2: ['Напрямок явища', 'Вид опадів', ''],
+        3: ['Опади, мм', 'Період, год', ''],
+        7: ['МДВ, км', 'Явища', 'Трив. НЯ/СГЯ, год'],
+        8: ['К-сть хмар', 'Форма хмар', 'Вис. нижн. межі, м'],
+        9: ['Діаметр, мм', '', '']
+    };
+    // 'grups[numberOfGroup].' + 'PAR' + (index + 1)
+    cols.each(function (index, col) {
+        col.innerText = grups[numberOfGroup][index];
     });
 }

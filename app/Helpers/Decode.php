@@ -25,7 +25,7 @@ class Decode
                 if ($dataDD >= $codeDD[0] && $dataDD <= $codeDD[1]) {
                     $dataFromSrok[$dataItem]->DD = $code[$codeItem]->RUMB;
                     break;
-                } else if($dataDD == 0 || $dataDD == 360) {
+                } else if ($dataDD == 0 || $dataDD == 360) {
                     $dataFromSrok[$dataItem]->DD = 'Пн';
                 }
             }
@@ -209,5 +209,98 @@ class Decode
             }
         }
         return $dataFromGroup;
+    }
+
+
+    /**
+     *
+     */
+    public function decodeWarepParams(&$dataForTable)
+    {
+        $groups = [
+            0 => [
+                'PAR1' => null,
+                'PAR2' => null,
+                'PAR3' => [
+                    1 => 'Наростання явища',
+                    2 => 'Збереження явища'
+                ]
+            ],
+
+            1 => [
+                'PAR1' => 'RUMB',
+                'PAR2' => null,
+                'PAR3' => null
+            ],
+
+            2 => [
+                'PAR1' => 'RUMB',
+                'PAR2' => 'WW',
+                'PAR3' => null
+            ],
+
+            3 => [
+                'PAR1' => null,
+                'PAR2' => null,
+                'PAR3' => null
+            ],
+
+            7 => [
+                'PAR1' => null,
+                'PAR2' => 'WW',
+                'PAR3' => null
+            ],
+
+            8 => [
+                'PAR1' => 'N',
+                'PAR2' => 'C',
+                'PAR3' => 'HSHS'
+            ],
+
+            9 => [
+                'PAR1' => null,
+                'PAR2' => null,
+                'PAR3' => null
+            ]
+        ];
+        for ($i = 0; $i < count($dataForTable); $i++) {
+            $group = $dataForTable[$i]->CODGROUP;
+
+            if ($group == 7) {
+                $dataForTable[$i]->PAR1 = $dataForTable[$i]->PAR1 / 10;
+            }
+            if ($group == 0) {
+                isset($dataForTable[$i]->PAR3) ? $dataForTable[$i]->PAR3 = $groups[$group][$dataForTable[$i]->PAR3] : '';
+            }
+            foreach ($groups[$group] as $key => $param) {
+
+                if (isset($param) && is_string($param)) {
+                    if (\Schema::hasColumn('WEATHER2', $param)) {
+                        $value = DB::table('WEATHER2')
+                            ->select($param)
+                            ->where('CODE_WAREP', '=', $dataForTable[$i]->$key)
+                            ->get();
+
+                        $rez = $value->first();
+
+                        if ($dataForTable[$i]->$key !== null) {
+                            $dataForTable[$i]->$key = $rez->$param;
+                        }
+
+                    } else if (\Schema::hasColumn('WEATHER', $param)) {
+                        $value = DB::table('WEATHER')
+                            ->select($param)
+                            ->where('CODE_WAREP', '=', $dataForTable[$i]->$key)
+                            ->get();
+
+                        $rez = $value->first();
+
+                        if ($dataForTable[$i]->$key !== null) {
+                            $dataForTable[$i]->$key = $rez->$param;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

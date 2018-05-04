@@ -33,6 +33,7 @@ class WarepController extends Controller
         $helper = new Helper();
         $regions = new Region();
         $stations = new Station();
+        $decode = new Decode();
 
         $appearances = DB::table('WEATHER2')->select('CODE_WAREP', 'CWCW')->where('CWCW', '!=', '')->get();
 
@@ -94,6 +95,7 @@ class WarepController extends Controller
                         $item->HENOTYP_DECODE = $appearance->CWCW;
                 }
             }
+            $decode->decodeWarepParams($dataForTable);
             /**
              * array with all data for view
              */
@@ -129,6 +131,7 @@ class WarepController extends Controller
             $countPages = ceil($warep->getCountStrBasic([1, 2], $appear) / PER_PAGE);
             $paginationLinks = $helper->generateLinksForPagination(url('/warep'), $countPages, $currentPage, true);
 
+            $decode->decodeWarepParams($dataForTable);
             /**
              * array with all data for view
              */
@@ -147,6 +150,7 @@ class WarepController extends Controller
     public function getDataWarep()
     {
         $helper = new Helper();
+
         $appearances = DB::table('WEATHER2')->select('CODE_WAREP', 'CWCW')->where('CWCW', '!=', '')->get();
 
         $appear = [];
@@ -166,7 +170,6 @@ class WarepController extends Controller
 
                     $storm = ($data['storm'] == 'All') ? [1, 2] : [(int)$data['storm']];
                     $appearance = ($data['appearance'] == 'All') ? $appear : [(int)$data['appearance']];
-
                     /**
                      * Save selected filters
                      */
@@ -213,6 +216,9 @@ class WarepController extends Controller
 
                     $countPages = ceil($countStr / PER_PAGE);
                     $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/warep'), $countPages, $currentPage, true) : "";
+
+                    $decode = new Decode();
+                    $decode->decodeWarepParams($dataForTable);
 
                     $dataOut = [
                         'dataForTable' => $dataForTable,

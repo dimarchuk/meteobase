@@ -158,9 +158,9 @@
                                     <th>Код групи</th>
                                     <th>Явище</th>
                                     <th>Код явища</th>
-                                    <th>1</th>
-                                    <th>2</th>
-                                    <th>3</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -175,9 +175,9 @@
                                         <td>{{$item->CODGROUP}}</td>
                                         <td>{{$item->HENOTYP_DECODE}}</td>
                                         <td>{{$item->CODPHENOTYP}}</td>
-                                        <td style="visibility: hidden">1</td>
-                                        <td style="visibility: hidden">2</td>
-                                        <td style="visibility: hidden">3</td>
+                                        <td style="visibility: hidden">{{$item->PAR1}}</td>
+                                        <td style="visibility: hidden">{{$item->PAR2}}</td>
+                                        <td style="visibility: hidden">{{$item->PAR3}}</td>
                                     </tr>
                                 @endforeach
                                 </tbody>

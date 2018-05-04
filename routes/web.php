@@ -12,7 +12,7 @@ Route::post('/', ['uses' => 'Kode_knController@getDataKodeKN']);
 Route::get('/warep', ['uses' => 'WarepController@show']);
 Route::post('/warep', ['uses' => 'WarepController@getDataWarep']);
 
-Route::get('/export', ['uses' => 'ExportController@export', 'as' => 'export']);
+Route::get('/export/{group?}', ['uses' => 'ExportController@export', 'as' => 'export']);
 
 /**
  * admin
