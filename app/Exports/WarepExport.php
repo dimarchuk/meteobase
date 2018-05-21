@@ -6,12 +6,8 @@ use DB;
 use Auth;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
-use App\{
-    Category, UserCategory
-};
-use App\Helpers\{
-    Helper, Decode
-};
+use App\UserCategory;
+use App\Helpers\Decode;
 
 /**
  * Class WarepExport
@@ -39,9 +35,7 @@ class WarepExport implements FromView
      */
     public function view(): View
     {
-        $helper = new Helper();
         $decode = new Decode();
-        $categories = Category::all();
 
         $uId = Auth::getUser()->getAuthIdentifier();
 
@@ -76,7 +70,7 @@ class WarepExport implements FromView
                     ->whereBetween('DATE_CH', [$selectedFilters['dateFrom'], $selectedFilters['dateTo']])
                     ->get();
 
-            } else if (isset($data['regionName']) && isset($data['stationName'])) {
+            } else if (isset($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
                 $dataForTable = DB::table('CAT_STATION')
                     ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
                     ->join('warep', 'CAT_STATION.IND_ST', '=', 'warep.INDSTATION')
@@ -89,7 +83,7 @@ class WarepExport implements FromView
                     ->whereBetween('DATE_CH', [$selectedFilters['dateFrom'], $selectedFilters['dateTo']])
                     ->get();
 
-            } else if (empty($data['regionName']) && isset($data['stationName'])) {
+            } else if (empty($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
                 $dataForTable = DB::table('CAT_STATION')
                     ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
                     ->join('warep', 'CAT_STATION.IND_ST', '=', 'warep.INDSTATION')
@@ -101,7 +95,7 @@ class WarepExport implements FromView
                     ->whereBetween('DATE_CH', [$selectedFilters['dateFrom'], $selectedFilters['dateTo']])
                     ->get();
 
-            } else if (empty($data['regionName']) && empty($data['stationName'])) {
+            } else if (empty($selectedFilters['regionName']) && empty($selectedFilters['stationName'])) {
                 $dataForTable = DB::table('CAT_STATION')
                     ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
                     ->join('warep', 'CAT_STATION.IND_ST', '=', 'warep.INDSTATION')
