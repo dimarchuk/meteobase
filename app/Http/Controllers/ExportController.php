@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\InvoicesExport;
 use App\Factories\ExportFactory;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -28,6 +27,11 @@ class ExportController extends Controller
         $className = trim($urlArr['path'], " \t\n\r\0\x0B/");
 
         $export = ExportFactory::build($className);
+
+        if ($group) {
+            $export->group = $group;
+        }
+
         $export->view();
 
         if (in_array('Data limit is limited', $export->getData())) {
@@ -36,7 +40,7 @@ class ExportController extends Controller
 
         $fileName = date('Y-m-d H:m:s');
 
-        return Excel::download(new InvoicesExport(), $fileName . '.xlsx');
+        return Excel::download($export, $fileName . '.xlsx');
     }
 
 }

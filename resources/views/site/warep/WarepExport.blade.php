@@ -12,9 +12,9 @@
                 <th>Код групи</th>
                 <th>Явище</th>
                 <th>Код явища</th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <th>{{$headers[0]}}</th>
+                <th>{{$headers[1]}}</th>
+                <th>{{$headers[2]}}</th>
             </tr>
             </thead>
             <tbody>
@@ -29,18 +29,12 @@
                     <td>{{$item->CODGROUP}}</td>
                     <td>{{$item->HENOTYP_DECODE}}</td>
                     <td>{{$item->CODPHENOTYP}}</td>
-                    <td style="visibility: hidden">{{$item->PAR1}}</td>
-                    <td style="visibility: hidden">{{$item->PAR2}}</td>
-                    <td style="visibility: hidden">{{$item->PAR3}}</td>
+                    <td>{{$item->PAR1}}</td>
+                    <td>{{$item->PAR2}}</td>
+                    <td>{{$item->PAR3}}</td>
                 </tr>
             @endforeach
             </tbody>
         </table>
     </div>
-
-    <ul class="pagination">
-        @php
-            echo $paginationLinks
-        @endphp
-    </ul>
 @endif
