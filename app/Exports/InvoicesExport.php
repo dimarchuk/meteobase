@@ -14,7 +14,10 @@ use App\Helpers\{
     Helper, Decode
 };
 
-
+/**
+ * Class InvoicesExport
+ * @package App\Exports
+ */
 class InvoicesExport implements FromView
 {
 
@@ -26,7 +29,7 @@ class InvoicesExport implements FromView
     /**
      * @return array
      */
-    function getData()
+    public function getData(): array
     {
         return $this->data;
     }

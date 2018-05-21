@@ -16,25 +16,17 @@ class UsersController extends Controller
     public function edit(Request $request, int $userId)
     {
         if ($request->isMethod('POST')) {
-
             parse_str($_POST['data'], $data);
-
             User::where('id', $userId)->update(['name' => $data['userName'], 'email' => $data['userEmail'], 'admin' => $data['gridRadios']]);
-
             return response()->json([
                 'message' => 'success'
             ], 200);
 
 
         } else if ($request->isMethod('GET')) {
-
             $col = ['id', 'name', 'email', 'admin'];
             $selectedUser = User::select($col)->where('id', '=', $userId)->get();
-
-
             $user = $selectedUser[0];
-
-
             return response(json_encode($user), 200);
         }
     }
@@ -46,7 +38,6 @@ class UsersController extends Controller
     public function delete($userId)
     {
         DB::table('users')->where('id', '=', $userId)->delete();
-
         return redirect()->back();
     }
 }

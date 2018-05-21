@@ -267,7 +267,7 @@ class Kode_knController extends Controller
                     break;
                 }
 
-            case "selectGroup9":
+            case "selectGroup9" :
                 {
                     $group9 = new Group9();
                     $group = $group9->selectGroup9Info($data);

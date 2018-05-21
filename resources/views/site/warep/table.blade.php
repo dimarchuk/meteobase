@@ -14,7 +14,7 @@
                 <th>Код явища</th>
                 <th></th>
                 <th></th>
-                <th></th>
+                <th> b</th>
             </tr>
             </thead>
             <tbody>

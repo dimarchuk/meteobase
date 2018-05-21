@@ -135,7 +135,7 @@ function getStrings() {
         var selectedRow = $(this).children("td")[6].textContent;
         var rows = $($("table").find("tbody tr"));
 
-        var exportURL = $("#export");
+         var exportURL = $("#export");
         exportURL[0].href = '/export' + '/' + selectedRow;
 
         setTableHeaders(selectedRow);

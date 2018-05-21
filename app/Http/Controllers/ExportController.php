@@ -24,10 +24,10 @@ class ExportController extends Controller
         ini_set('max_execution_time', 900);
         libxml_use_internal_errors(true);
 
-       ExportFactory::build('warep');
+        $urlArr = parse_url($request->header('referer'));
+        $className = trim($urlArr['path'], " \t\n\r\0\x0B/");
 
-dd(parse_url($request->header('referer')), isset($group));
-        $export = new InvoicesExport();
+        $export = ExportFactory::build($className);
         $export->view();
 
         if (in_array('Data limit is limited', $export->getData())) {

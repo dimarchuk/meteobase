@@ -1,15 +1,35 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: u_programmer2
- * Date: 04.05.2018
- * Time: 15:40
- */
 
 namespace App\Exports;
 
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
 
-class WarepExport
+
+/**
+ * Class WarepExport
+ * @package App\Exports
+ */
+class WarepExport implements FromView
 {
+    /**
+     * @var array
+     */
+    private $data = [];
 
+    /**
+     * @return array
+     */
+    public function getData(): array
+    {
+       return $this->data;
+    }
+
+    /**
+     * @return View
+     */
+    public function view(): View
+    {
+        // TODO: Implement view() method.
+    }
 }

@@ -2,16 +2,20 @@
 
 namespace App\Factories;
 
+/**
+ * Class ExportFactory
+ * @package App\Factories
+ */
 class ExportFactory
 {
     public static function build($exportName)
     {
-        $class = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Exports' . DIRECTORY_SEPARATOR;
+        if ($exportName == null) $exportName = 'invoices';
 
-        echo $class .= ucfirst($exportName) . 'Export.php';
+        $class = 'App\Exports\\' . ucfirst($exportName) . 'Export';
 
-        if (file_exists($class)) {
-            dd(new $class());
+        if (class_exists($class)) {
+            return new $class();
         }
     }
 }
