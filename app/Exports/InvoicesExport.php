@@ -13,12 +13,13 @@ use App\{
 use App\Helpers\{
     Helper, Decode
 };
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 /**
  * Class InvoicesExport
  * @package App\Exports
  */
-class InvoicesExport implements FromView
+class InvoicesExport implements FromView, ShouldAutoSize
 {
 
     /**

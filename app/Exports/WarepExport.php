@@ -8,12 +8,13 @@ use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use App\UserCategory;
 use App\Helpers\Decode;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 /**
  * Class WarepExport
  * @package App\Exports
  */
-class WarepExport implements FromView
+class WarepExport implements FromView, ShouldAutoSize
 {
     public $group = null;
 
