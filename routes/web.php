@@ -12,6 +12,15 @@ Route::post('/', ['uses' => 'Kode_knController@getDataKodeKN']);
 Route::get('/warep', ['uses' => 'WarepController@show']);
 Route::post('/warep', ['uses' => 'WarepController@getDataWarep']);
 
+/**
+ * kode KN-01 daily
+ */
+Route::get('/kndaily', ['uses' => 'KNDailyController@show']);
+Route::post('/kndaily', ['uses' => 'KNDailyController@getDataKodeKN']);
+
+/**
+ * For Export to exel
+ */
 Route::get('/export/{group?}', ['uses' => 'ExportController@export', 'as' => 'export']);
 
 /**
@@ -28,8 +37,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin']], function 
      * /admin/edit/user/{id}
      */
     Route::match(['get', 'post',], '/edit/user/{id}', ['uses' => 'UsersController@edit']);
-//    Route::get( '/edit/user/{id}', ['uses' => 'UsersController@edit']);
-//    Route::post('/edit/user/{id}', ['uses' => 'UsersController@edit']);
 
     /**
      * /admin/delete/user/{id}

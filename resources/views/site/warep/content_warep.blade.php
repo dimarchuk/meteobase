@@ -6,7 +6,7 @@
                     <ul>
                         <li><a href="{!! url('/')!!}">КC-01(строковий)</a></li>
                         <li><a href="{!! url('/warep') !!}">WAREP</a></li>
-                        <li><a href="#">КC-01(добовий)</a></li>
+                        <li><a href="{!! url('/kndaily') !!}">КC-01(добовий)</a></li>
                         <li><a href="#">Дані за місяць</a></li>
                         <li><a href="#">CLIMAT(Сер. місячні дані)</a></li>
                     </ul>
