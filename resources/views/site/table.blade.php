@@ -15,7 +15,6 @@
                 @foreach($categories as $category)
                     @php
                         $codeCategory = $category->code_col_name;
-                            //echo "<td>{$item->$codeCategory}</td>"
                     @endphp
 
                     @if($codeCategory == 'A' || $codeCategory == 'WW'|| $codeCategory == 'W1' || $codeCategory == 'W2'

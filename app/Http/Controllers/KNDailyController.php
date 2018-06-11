@@ -3,6 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Helpers\{
+    Helper, Decode, KNDaily
+};
+use App\{
+    Category, Region, Station, Srok, UserCategory, Group9, User
+};
+
+use DB;
+use Auth;
+use function PHPSTORM_META\type;
 
 class KNDailyController extends Controller
 {
@@ -15,13 +25,393 @@ class KNDailyController extends Controller
         define("PER_PAGE", 18);
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function show()
     {
-        return view('/site.kndaily.kode_kn_daily');
+
+        $helper = new Helper();
+        $decode = new Decode();
+        $regions = new Region();
+        $stations = new Station();
+        $categories = [
+            [
+                'col_name' => 'Назва області',
+                'short_col_name' => 'Назва області',
+                'code_col_name' => 'NAME_OBL'
+            ],
+            [
+                'col_name' => 'Назва станції',
+                'short_col_name' => 'Назва станції',
+                'code_col_name' => 'NAME_ST'
+            ],
+            [
+                'col_name' => 'Індекс',
+                'short_col_name' => 'Індекс',
+                'code_col_name' => 'IND_ST'
+            ],
+            [
+                'col_name' => 'Дата',
+                'short_col_name' => 'Дата',
+                'code_col_name' => 'DATE_CH'
+            ],
+            [
+                'col_name' => 'Температура повітря, середня',
+                'short_col_name' => 'T сер, &deg;С',
+                'code_col_name' => 'TTT'
+            ],
+            [
+                'col_name' => 'Мінімальна температура',
+                'short_col_name' => 'Tmin',
+                'code_col_name' => 'TMIN'
+            ],
+            [
+                'col_name' => 'Максимальна температура',
+                'short_col_name' => 'Тmax',
+                'code_col_name' => 'TMAX'
+            ],
+            [
+                'col_name' => 'Температура точки роси, середня',
+                'short_col_name' => 'Тсер. роси',
+                'code_col_name' => 'TDTDTD'
+            ],
+            [
+                "col_name" => "Tmin поверхні грунту",
+                "short_col_name" => "Тmin грунту",
+                "code_col_name" => "TGTG"
+            ],
+            [
+                "col_name" => "Тmin грунту на висоті 2 см",
+                "short_col_name" => "Тmin, 2см",
+                "code_col_name" => "T2T2"
+            ],
+            [
+                "col_name" => "Добова кількість опадів",
+                "short_col_name" => "Добова сума опадів, мм",
+                "code_col_name" => "RRR1"
+            ],
+            [
+                "col_name" => "Середян швидкість вітру",
+                "short_col_name" => "Шв. вітру сер., м/с",
+                "code_col_name" => "FF_ser"
+            ],
+            [
+                "col_name" => "Максимальна швидкість вітру",
+                "short_col_name" => "Шв. вітру макс., м/с",
+                "code_col_name" => "FF_max"
+            ],
+            [
+                "col_name" => "Загальна кількість хмар",
+                "short_col_name" => "Заг к-сть хмар",
+                "code_col_name" => "N"
+            ],
+            [
+                "col_name" => "Зачення баричної тенденції",
+                "short_col_name" => "Знач. бар. тенд, гПа",
+                "code_col_name" => "PPP"
+            ],
+            [
+                "col_name" => "Тиск повітря, середній",
+                "short_col_name" => "Тиск, гПа",
+                "code_col_name" => "P0P0P0P0"
+            ],
+            [
+                "col_name" => "Тиск повітря зведений до сер. рівня моря, середній",
+                "short_col_name" => "Тиск прив, гПа",
+                "code_col_name" => "PPPP"
+            ],
+            [
+                "col_name" => "Висота снігу",
+                "short_col_name" => "Вис. снігу, см",
+                "code_col_name" => "HSNOW"
+            ],
+            [
+                "col_name" => "Тривалість сонячного сяйва",
+                "short_col_name" => "Трив. сон. сяйва, год",
+                "code_col_name" => "SSS"
+            ]
+        ];
+
+        $uId = Auth::getUser()->getAuthIdentifier();
+
+        if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNday')->exists()) {
+
+            $selectedFilters = UserCategory::all()->where('user_id', '=', $uId)->where('page', 'kodeKNday')->first();
+            parse_str($selectedFilters->categories_list, $selectedFilters);
+
+            $selectedFilters['dateFrom'] = date('Y-m-d', (strtotime($selectedFilters['dateFrom']) - (60 * 60 * 24)));
+
+            if ($selectedFilters['dateTo'] == Date('Y-m-d')) {
+                $selectedFilters['dateTo'] = date('Y-m-d', (strtotime($selectedFilters['dateTo']) - (60 * 60 * 24)));
+
+            }
+
+            //add default categiry
+            $defaultColl = ['NAME_OBL', 'NAME_ST', 'IND_ST', 'DATE_CH'];
+            $helper->addItemsinArr($defaultColl, $selectedFilters['collumns']);
+
+            $selectedRegions = isset($selectedFilters['regionName']) ? $selectedFilters['regionName'] : null;
+            $selectesStations = isset($selectedFilters['stationName']) ? $selectedFilters['stationName'] : null;
+
+            $strok = [0, 3, 6, 9, 12, 15, 18, 21];
+            $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+
+            /**
+             * Data filtering
+             */
+            if (isset($selectedFilters['regionName']) && empty($selectedFilters['stationName'])) {
+                $dataForTable = DB::table('CAT_STATION')
+                    ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                    ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+                    ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                    ->orderBy('CAT_STATION.IND_ST')
+                    ->whereIn('CAT_STATION.OBL_ID', $selectedFilters['regionName'])
+                    ->whereIn('srok.SROK_CH', $strok)
+                    ->whereBetween('DATE_CH', [$selectedFilters['dateFrom'], $selectedFilters['dateTo']])
+                    ->get();
+
+            } else if (isset($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
+                $dataForTable = DB::table('CAT_STATION')
+                    ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                    ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+                    ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                    ->orderBy('CAT_STATION.IND_ST')
+                    ->whereIn('CAT_STATION.OBL_ID', $selectedFilters['regionName'])
+                    ->whereIn('CAT_STATION.IND_ST', $selectedFilters['stationName'])
+                    ->whereIn('srok.SROK_CH', $strok)
+                    ->whereBetween('DATE_CH', [$selectedFilters['dateFrom'], $selectedFilters['dateTo']])
+                    ->get();
+
+            } else if (empty($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
+                $dataForTable = DB::table('CAT_STATION')
+                    ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                    ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+                    ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                    ->orderBy('CAT_STATION.IND_ST')
+                    ->whereIn('CAT_STATION.IND_ST', $selectedFilters['stationName'])
+                    ->whereIn('srok.SROK_CH', $strok)
+                    ->whereBetween('DATE_CH', [$selectedFilters['dateFrom'], $selectedFilters['dateTo']])
+                    ->get();
+
+            } else if (empty($selectedFilters['regionName']) && empty($selectedFilters['stationName'])) {
+                $dataForTable = DB::table('CAT_STATION')
+                    ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                    ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+                    ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                    ->orderBy('CAT_STATION.IND_ST')
+                    ->whereBetween('DATE_CH', [$selectedFilters['dateFrom'], $selectedFilters['dateTo']])
+                    ->get();
+            }
+
+            $countStr = count($dataForTable);
+            $countPages = ceil($countStr / PER_PAGE);
+
+            $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/kndaily'),
+                $countPages, $currentPage, true) : "";
+
+            $decode->decodeBaricTendency($dataForTable);
+            $decode->decodeSoilCondition($dataForTable);
+
+            /**
+             * array with all data for view
+             */
+            $data = [
+                'regions' => $regions->getAllRegions(),
+                'selectedRegions' => $selectedRegions,
+                'stations' => $stations->getAllStation(),
+                'selectedStations' => $selectesStations,
+                'categories' => $categories,
+                'dataForTable' => $dataForTable->forPage($currentPage, PER_PAGE),
+                'selectedCategories' => $selectedFilters['collumns'],
+                'paginationLinks' => $paginationLinks
+            ];
+
+        } else {
+            //if first auth
+            $currentDate = Date('Y-m-d');
+            $dateFrom = date('Y-m-d', (strtotime($currentDate) - (60 * 60 * 24) * 2));
+            $dateTo = date('Y-m-d', (strtotime($currentDate) - (60 * 60 * 24)));
+
+
+            $selectedCategories = $categories;
+//            dd($selectedCategories[0]['code_col_name'] == $categories[0]['code_col_name']);
+            $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+
+            /**
+             * Get data
+             */
+            $dataForTable = DB::table('CAT_STATION')
+                ->select(['NAME_OBL', 'NAME_ST', 'srok.IND_ST', 'DATE_CH','SROK_CH', 'TTT', 'TMIN', 'TMAX', 'TDTDTD', 'TGTG', 'T2T2', 'RRR1', 'FF', 'N', 'PPP', 'P0P0P0P0','PPPP','HSNOW','SSS'])
+                ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+                ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                ->orderBy('CAT_STATION.IND_ST')
+                ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
+                ->get();
+
+            $kndaily = new KNDaily($dataForTable, ['dateFrom' => $dateTo, 'dateTo' => $dateTo], $categories);
+            $tmp = $kndaily->calculate();
+            $dataForTable = collect($tmp);
+
+            /**
+             * Create pagination links
+             */
+            $countPages = ceil(count($dataForTable) / PER_PAGE);
+            $paginationLinks = $helper->generateLinksForPagination(url('/kndaily'), $countPages, $currentPage, true);
+
+            /**
+             * array with all data for view
+             */
+            $data = [
+                'regions' => $regions->getAllRegions(),
+                'stations' => $stations->getAllStation(),
+                'categories' => $categories,
+                'dataForTable' => $dataForTable->forPage($currentPage, PER_PAGE),
+                'selectedCategories' => $selectedCategories,
+                'paginationLinks' => $paginationLinks
+            ];
+        }
+
+        return view('/site.kndaily.kode_kn_daily', $data);
     }
 
+    /**
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Symfony\Component\HttpFoundation\Response
+     */
     public function getDataKodeKN()
     {
-        var_dump(__METHOD__);
+        $helper = new Helper();
+        $decode = new Decode();
+        $stations = new Station();
+
+        parse_str($_POST['data'], $data);
+
+        $ajaxIdentification = $data['requestName'];
+
+        switch ($ajaxIdentification) {
+            case "selectStation":
+                {
+                    if (empty($data['regionName'])) {
+                        $stations = $stations->getAllStation();
+
+                    } else {
+                        $stations->regionName = $data['regionName'];
+                        $stations = $stations->filterStation();
+                    }
+
+                    $data = [
+                        'station' => $stations
+                    ];
+
+                    $response_data = json_encode($data);
+                    return response($response_data, 200);
+                    break;
+                }
+
+            case "selectInfoForTable":
+                {
+                    $currentPage = isset($data['page']) ? $data['page'] : 1;
+
+                    //add default categiry
+                    $defaultColl = ['NAME_OBL', 'NAME_ST', 'IND_ST', 'DATE_CH'];
+                    $helper->addItemsinArr($defaultColl, $data['collumns']);
+
+                    $categories = Category::all()->whereIn('code_col_name', $data['collumns']);
+
+                    $data['dateFrom'] = date('Y-m-d', (strtotime($data['dateFrom']) - (60 * 60 * 24)));
+
+                    if ($data['dateTo'] == date('Y-m-d')) {
+                        $data['dateTo'] = date('Y-m-d', (strtotime($data['dateTo']) - (60 * 60 * 24)));
+                    }
+
+                    $strok = [0, 3, 6, 9, 12, 15, 18, 21];
+
+                    /**
+                     * Save selected filters
+                     */
+                    $uId = Auth::getUser()->getAuthIdentifier();
+                    if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNday')->exists()) {
+                        DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNday')->update(
+                            ['categories_list' => $_POST['data']]
+                        );
+                    } else {
+                        DB::table('user_categories')->where('user_id', $uId)->insert(
+                            ['user_id' => $uId, 'page' => 'kodeKNdaily ', 'categories_list' => $_POST['data']]
+                        );
+                    }
+
+                    /**
+                     * Data filtering
+                     */
+                    if (isset($data['regionName']) && empty($data['stationName'])) {
+                        $dataForTable = DB::table('CAT_STATION')
+                            ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                            ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+                            ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                            ->orderBy('CAT_STATION.IND_ST')
+                            ->whereIn('CAT_STATION.OBL_ID', $data['regionName'])
+                            ->whereIn('srok.SROK_CH', $strok)
+                            ->whereBetween('DATE_CH', [$data['dateFrom'], $data['dateTo']])
+                            ->get();
+
+                    } else if (isset($data['regionName']) && isset($data['stationName'])) {
+                        $dataForTable = DB::table('CAT_STATION')
+                            ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                            ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+                            ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                            ->orderBy('CAT_STATION.IND_ST')
+                            ->whereIn('CAT_STATION.OBL_ID', $data['regionName'])
+                            ->whereIn('CAT_STATION.IND_ST', $data['stationName'])
+                            ->whereIn('srok.SROK_CH', $strok)
+                            ->whereBetween('DATE_CH', [$data['dateFrom'], $data['dateTo']])
+                            ->get();
+
+                    } else if (empty($data['regionName']) && isset($data['stationName'])) {
+                        $dataForTable = DB::table('CAT_STATION')
+                            ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                            ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+                            ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                            ->orderBy('CAT_STATION.IND_ST')
+                            ->whereIn('CAT_STATION.IND_ST', $data['stationName'])
+                            ->whereIn('srok.SROK_CH', $strok)
+                            ->whereBetween('DATE_CH', [$data['dateFrom'], $data['dateTo']])
+                            ->get();
+
+                    } else if (empty($data['regionName']) && empty($data['stationName'])) {
+                        $dataForTable = DB::table('CAT_STATION')
+                            ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
+                            ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
+                            ->orderBy('CAT_STATION.OBL_ID', 'asc')
+                            ->orderBy('CAT_STATION.IND_ST')
+                            ->whereBetween('DATE_CH', [$data['dateFrom'], $data['dateTo']])
+                            ->get();
+                    }
+
+                    $countStr = count($dataForTable);
+                    $countPages = ceil($countStr / PER_PAGE);
+
+                    $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/kndaily'), $countPages, $currentPage, true) : "";
+
+                    $decode->decodeDirectionWind($dataForTable);
+                    $decode->decodeBaricTendency($dataForTable);
+                    $decode->decodeWeatherSrok($dataForTable);
+                    $decode->decodeWeatherSrok12($dataForTable);
+                    $decode->decodeClouds($dataForTable);
+                    $decode->decodeCloudsC($dataForTable);
+                    $decode->decodeSoilCondition($dataForTable);
+
+                    $dataOut = [
+                        'categories' => $categories,
+                        'dataForTable' => $dataForTable->forPage($currentPage, PER_PAGE),
+                        'countPages' => $countPages,
+                        'currentPage' => $currentPage,
+                        'paginationLinks' => $paginationLinks,
+                    ];
+
+                    return view('site.table', $dataOut);
+                    break;
+                }
+        }
     }
 }

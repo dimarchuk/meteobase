@@ -7,7 +7,11 @@ use DB;
 
 class Srok extends Model
 {
+    /**
+     * @var string
+     */
     protected $table = 'srok';
+
     protected $date;
 
     /**
@@ -152,7 +156,8 @@ class Srok extends Model
      * @param array $strok
      * @return int
      */
-    function getCountStrRegionStation(array $regionName, array $stationName, array $strok)
+    function
+    getCountStrRegionStation(array $regionName, array $stationName, array $strok)
     {
         $count = DB::table('CAT_STATION')
             ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
@@ -177,7 +182,6 @@ class Srok extends Model
      */
     public function getRegionStationData(array $regionName, array $stationName, array $strok, int $page)
     {
-
         $srok = DB::table('CAT_STATION')
             ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
             ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
