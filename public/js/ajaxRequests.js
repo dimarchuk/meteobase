@@ -49,9 +49,8 @@ $(document).ready(function () {
             type: $that.attr('method'),
             url: $that.attr('action'),
             data: {data: fData},
-            dataType: 'html',
+            // dataType: 'html',
             success: function (view) {
-
                 $('.table-responsive').remove();
                 $('.main-content').html(view);
 
@@ -76,7 +75,6 @@ $(document).ready(function () {
 function getSelectedPage(page, path) {
 
     var fData = $('form').serialize() + "&requestName=selectInfoForTable" + "&page=" + page;
-
     $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         type: 'POST',

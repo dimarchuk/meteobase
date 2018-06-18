@@ -16,6 +16,105 @@ use function PHPSTORM_META\type;
 
 class KNDailyController extends Controller
 {
+    private $categories = [
+        [
+            'col_name' => 'Назва області',
+            'short_col_name' => 'Назва області',
+            'code_col_name' => 'NAME_OBL'
+        ],
+        [
+            'col_name' => 'Назва станції',
+            'short_col_name' => 'Назва станції',
+            'code_col_name' => 'NAME_ST'
+        ],
+        [
+            'col_name' => 'Індекс',
+            'short_col_name' => 'Індекс',
+            'code_col_name' => 'IND_ST'
+        ],
+        [
+            'col_name' => 'Дата',
+            'short_col_name' => 'Дата',
+            'code_col_name' => 'DATE_CH'
+        ],
+        [
+            'col_name' => 'Температура повітря, середня',
+            'short_col_name' => 'T сер, &deg;С',
+            'code_col_name' => 'TTT'
+        ],
+        [
+            'col_name' => 'Мінімальна температура',
+            'short_col_name' => 'Tmin',
+            'code_col_name' => 'TMIN'
+        ],
+        [
+            'col_name' => 'Максимальна температура',
+            'short_col_name' => 'Тmax',
+            'code_col_name' => 'TMAX'
+        ],
+        [
+            'col_name' => 'Температура точки роси, середня',
+            'short_col_name' => 'Тсер. роси',
+            'code_col_name' => 'TDTDTD'
+        ],
+        [
+            "col_name" => "Tmin поверхні грунту",
+            "short_col_name" => "Тmin грунту",
+            "code_col_name" => "TGTG"
+        ],
+        [
+            "col_name" => "Тmin грунту на висоті 2 см",
+            "short_col_name" => "Тmin, 2см",
+            "code_col_name" => "T2T2"
+        ],
+        [
+            "col_name" => "Добова кількість опадів",
+            "short_col_name" => "Добова сума опадів, мм",
+            "code_col_name" => "RRR1"
+        ],
+        [
+            "col_name" => "Середян швидкість вітру",
+            "short_col_name" => "Шв. вітру сер., м/с",
+            "code_col_name" => "FF_ser"
+        ],
+        [
+            "col_name" => "Максимальна швидкість вітру",
+            "short_col_name" => "Шв. вітру макс., м/с",
+            "code_col_name" => "FF_max"
+        ],
+        [
+            "col_name" => "Загальна кількість хмар",
+            "short_col_name" => "Заг к-сть хмар",
+            "code_col_name" => "N"
+        ],
+        [
+            "col_name" => "Зачення баричної тенденції",
+            "short_col_name" => "Знач. бар. тенд, гПа",
+            "code_col_name" => "PPP"
+        ],
+        [
+            "col_name" => "Тиск повітря, середній",
+            "short_col_name" => "Тиск, гПа",
+            "code_col_name" => "P0P0P0P0"
+        ],
+        [
+            "col_name" => "Тиск повітря зведений до сер. рівня моря, середній",
+            "short_col_name" => "Тиск прив, гПа",
+            "code_col_name" => "PPPP"
+        ],
+        [
+            "col_name" => "Висота снігу",
+            "short_col_name" => "Вис. снігу, см",
+            "code_col_name" => "HSNOW"
+        ],
+        [
+            "col_name" => "Тривалість сонячного сяйва",
+            "short_col_name" => "Трив. сон. сяйва, год",
+            "code_col_name" => "SSS"
+        ]
+    ];
+    private $collumns = ['NAME_OBL', 'NAME_ST', 'srok.IND_ST', 'DATE_CH', 'SROK_CH', 'TTT', 'TMIN', 'TMAX', 'TDTDTD', 'TGTG', 'T2T2', 'RRR1', 'FF', 'N', 'PPP', 'P0P0P0P0', 'PPPP', 'HSNOW', 'SSS'];
+
     /**
      * Kode_knController constructor.
      */
@@ -35,103 +134,6 @@ class KNDailyController extends Controller
         $decode = new Decode();
         $regions = new Region();
         $stations = new Station();
-        $categories = [
-            [
-                'col_name' => 'Назва області',
-                'short_col_name' => 'Назва області',
-                'code_col_name' => 'NAME_OBL'
-            ],
-            [
-                'col_name' => 'Назва станції',
-                'short_col_name' => 'Назва станції',
-                'code_col_name' => 'NAME_ST'
-            ],
-            [
-                'col_name' => 'Індекс',
-                'short_col_name' => 'Індекс',
-                'code_col_name' => 'IND_ST'
-            ],
-            [
-                'col_name' => 'Дата',
-                'short_col_name' => 'Дата',
-                'code_col_name' => 'DATE_CH'
-            ],
-            [
-                'col_name' => 'Температура повітря, середня',
-                'short_col_name' => 'T сер, &deg;С',
-                'code_col_name' => 'TTT'
-            ],
-            [
-                'col_name' => 'Мінімальна температура',
-                'short_col_name' => 'Tmin',
-                'code_col_name' => 'TMIN'
-            ],
-            [
-                'col_name' => 'Максимальна температура',
-                'short_col_name' => 'Тmax',
-                'code_col_name' => 'TMAX'
-            ],
-            [
-                'col_name' => 'Температура точки роси, середня',
-                'short_col_name' => 'Тсер. роси',
-                'code_col_name' => 'TDTDTD'
-            ],
-            [
-                "col_name" => "Tmin поверхні грунту",
-                "short_col_name" => "Тmin грунту",
-                "code_col_name" => "TGTG"
-            ],
-            [
-                "col_name" => "Тmin грунту на висоті 2 см",
-                "short_col_name" => "Тmin, 2см",
-                "code_col_name" => "T2T2"
-            ],
-            [
-                "col_name" => "Добова кількість опадів",
-                "short_col_name" => "Добова сума опадів, мм",
-                "code_col_name" => "RRR1"
-            ],
-            [
-                "col_name" => "Середян швидкість вітру",
-                "short_col_name" => "Шв. вітру сер., м/с",
-                "code_col_name" => "FF_ser"
-            ],
-            [
-                "col_name" => "Максимальна швидкість вітру",
-                "short_col_name" => "Шв. вітру макс., м/с",
-                "code_col_name" => "FF_max"
-            ],
-            [
-                "col_name" => "Загальна кількість хмар",
-                "short_col_name" => "Заг к-сть хмар",
-                "code_col_name" => "N"
-            ],
-            [
-                "col_name" => "Зачення баричної тенденції",
-                "short_col_name" => "Знач. бар. тенд, гПа",
-                "code_col_name" => "PPP"
-            ],
-            [
-                "col_name" => "Тиск повітря, середній",
-                "short_col_name" => "Тиск, гПа",
-                "code_col_name" => "P0P0P0P0"
-            ],
-            [
-                "col_name" => "Тиск повітря зведений до сер. рівня моря, середній",
-                "short_col_name" => "Тиск прив, гПа",
-                "code_col_name" => "PPPP"
-            ],
-            [
-                "col_name" => "Висота снігу",
-                "short_col_name" => "Вис. снігу, см",
-                "code_col_name" => "HSNOW"
-            ],
-            [
-                "col_name" => "Тривалість сонячного сяйва",
-                "short_col_name" => "Трив. сон. сяйва, год",
-                "code_col_name" => "SSS"
-            ]
-        ];
 
         $uId = Auth::getUser()->getAuthIdentifier();
 
@@ -221,7 +223,7 @@ class KNDailyController extends Controller
                 'selectedRegions' => $selectedRegions,
                 'stations' => $stations->getAllStation(),
                 'selectedStations' => $selectesStations,
-                'categories' => $categories,
+                'categories' => $this->categories,
                 'dataForTable' => $dataForTable->forPage($currentPage, PER_PAGE),
                 'selectedCategories' => $selectedFilters['collumns'],
                 'paginationLinks' => $paginationLinks
@@ -234,7 +236,7 @@ class KNDailyController extends Controller
             $dateTo = date('Y-m-d', (strtotime($currentDate) - (60 * 60 * 24)));
 
 
-            $selectedCategories = $categories;
+            $selectedCategories = $this->categories;
 //            dd($selectedCategories[0]['code_col_name'] == $categories[0]['code_col_name']);
             $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
 
@@ -242,7 +244,7 @@ class KNDailyController extends Controller
              * Get data
              */
             $dataForTable = DB::table('CAT_STATION')
-                ->select(['NAME_OBL', 'NAME_ST', 'srok.IND_ST', 'DATE_CH','SROK_CH', 'TTT', 'TMIN', 'TMAX', 'TDTDTD', 'TGTG', 'T2T2', 'RRR1', 'FF', 'N', 'PPP', 'P0P0P0P0','PPPP','HSNOW','SSS'])
+                ->select($this->collumns)
                 ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
                 ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
                 ->orderBy('CAT_STATION.OBL_ID', 'asc')
@@ -250,7 +252,7 @@ class KNDailyController extends Controller
                 ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
                 ->get();
 
-            $kndaily = new KNDaily($dataForTable, ['dateFrom' => $dateTo, 'dateTo' => $dateTo], $categories);
+            $kndaily = new KNDaily($dataForTable, ['dateFrom' => $dateTo, 'dateTo' => $dateTo], $this->categories);
             $tmp = $kndaily->calculate();
             $dataForTable = collect($tmp);
 
@@ -266,7 +268,7 @@ class KNDailyController extends Controller
             $data = [
                 'regions' => $regions->getAllRegions(),
                 'stations' => $stations->getAllStation(),
-                'categories' => $categories,
+                'categories' => $this->categories,
                 'dataForTable' => $dataForTable->forPage($currentPage, PER_PAGE),
                 'selectedCategories' => $selectedCategories,
                 'paginationLinks' => $paginationLinks
@@ -311,35 +313,49 @@ class KNDailyController extends Controller
 
             case "selectInfoForTable":
                 {
+                    $currentDate = date('Y-m-d');
                     $currentPage = isset($data['page']) ? $data['page'] : 1;
 
                     //add default categiry
                     $defaultColl = ['NAME_OBL', 'NAME_ST', 'IND_ST', 'DATE_CH'];
-                    $helper->addItemsinArr($defaultColl, $data['collumns']);
+                    if (isset($data['collumns'])) {
+                        $collumns = $data['collumns'];
+                    } else $collumns = [];
 
-                    $categories = Category::all()->whereIn('code_col_name', $data['collumns']);
+                    $helper->addItemsinArr($defaultColl, $collumns);
 
-                    $data['dateFrom'] = date('Y-m-d', (strtotime($data['dateFrom']) - (60 * 60 * 24)));
-
-                    if ($data['dateTo'] == date('Y-m-d')) {
-                        $data['dateTo'] = date('Y-m-d', (strtotime($data['dateTo']) - (60 * 60 * 24)));
+                    //Выборка категорий по выбраным пользователем колонкам
+                    foreach ($this->categories as $category) {
+                        foreach ($collumns as $collumn) {
+                            if ($category['code_col_name'] == $collumn) {
+                                $categories[] = $category;
+                            }
+                        }
                     }
 
-                    $strok = [0, 3, 6, 9, 12, 15, 18, 21];
+                    $dateFrom = date('Y-m-d', (strtotime($data['dateFrom']) - (60 * 60 * 24)));
+                    $dateTo = $data['dateTo'];
+                    if ($data['dateTo'] == $currentDate) {
+                        if ($data['dateFrom'] == $data['dateTo']) {
+                            $dateFrom = date('Y-m-d', (strtotime($data['dateFrom']) - ((60 * 60 * 24) * 2)));
+                        }
+                        $dateTo = date('Y-m-d', (strtotime($data['dateTo']) - (60 * 60 * 24)));
+                    }
 
                     /**
                      * Save selected filters
                      */
-                    $uId = Auth::getUser()->getAuthIdentifier();
-                    if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNday')->exists()) {
-                        DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNday')->update(
-                            ['categories_list' => $_POST['data']]
-                        );
-                    } else {
-                        DB::table('user_categories')->where('user_id', $uId)->insert(
-                            ['user_id' => $uId, 'page' => 'kodeKNdaily ', 'categories_list' => $_POST['data']]
-                        );
-                    }
+//                    $uId = Auth::getUser()->getAuthIdentifier();
+//                    if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNdaily')->exists()) {
+//                        DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNdaily')->update(
+//                             ['categories_list' => $_POST['data']]
+//                        );
+//                    } else {
+//                        DB::table('user_categories')->where('user_id', $uId)->insert(
+//                            ['user_id' => $uId, 'page' => 'kodeKNdaily ', 'categories_list' => $_POST['data']]
+//                        );
+//                    }
+
 
                     /**
                      * Data filtering
@@ -351,8 +367,8 @@ class KNDailyController extends Controller
                             ->orderBy('CAT_STATION.OBL_ID', 'asc')
                             ->orderBy('CAT_STATION.IND_ST')
                             ->whereIn('CAT_STATION.OBL_ID', $data['regionName'])
-                            ->whereIn('srok.SROK_CH', $strok)
-                            ->whereBetween('DATE_CH', [$data['dateFrom'], $data['dateTo']])
+                            ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
+//                            ->select($collumns)
                             ->get();
 
                     } else if (isset($data['regionName']) && isset($data['stationName'])) {
@@ -363,8 +379,8 @@ class KNDailyController extends Controller
                             ->orderBy('CAT_STATION.IND_ST')
                             ->whereIn('CAT_STATION.OBL_ID', $data['regionName'])
                             ->whereIn('CAT_STATION.IND_ST', $data['stationName'])
-                            ->whereIn('srok.SROK_CH', $strok)
-                            ->whereBetween('DATE_CH', [$data['dateFrom'], $data['dateTo']])
+                            ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
+//                            ->select($collumns)
                             ->get();
 
                     } else if (empty($data['regionName']) && isset($data['stationName'])) {
@@ -374,42 +390,46 @@ class KNDailyController extends Controller
                             ->orderBy('CAT_STATION.OBL_ID', 'asc')
                             ->orderBy('CAT_STATION.IND_ST')
                             ->whereIn('CAT_STATION.IND_ST', $data['stationName'])
-                            ->whereIn('srok.SROK_CH', $strok)
-                            ->whereBetween('DATE_CH', [$data['dateFrom'], $data['dateTo']])
+                            ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
+//                            ->select($collumns)
                             ->get();
-
                     } else if (empty($data['regionName']) && empty($data['stationName'])) {
                         $dataForTable = DB::table('CAT_STATION')
                             ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
                             ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
                             ->orderBy('CAT_STATION.OBL_ID', 'asc')
                             ->orderBy('CAT_STATION.IND_ST')
-                            ->whereBetween('DATE_CH', [$data['dateFrom'], $data['dateTo']])
+                            ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
+//                            ->select($collumns)
                             ->get();
                     }
+
+                    if ($data['dateFrom'] == $currentDate) {
+                        $dateFrom = date('Y-m-d', (strtotime($data['dateFrom']) - (60 * 60 * 24)));
+                    } else {
+                        $dateFrom = $data['dateFrom'];
+                    }
+                    $kndaily = new KNDaily($dataForTable, ['dateFrom' => $dateFrom, 'dateTo' => $dateTo], $categories);
+                    $tmp = $kndaily->calculate();
+
+                    $dataForTable = collect($tmp);
 
                     $countStr = count($dataForTable);
                     $countPages = ceil($countStr / PER_PAGE);
 
                     $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/kndaily'), $countPages, $currentPage, true) : "";
 
-                    $decode->decodeDirectionWind($dataForTable);
-                    $decode->decodeBaricTendency($dataForTable);
-                    $decode->decodeWeatherSrok($dataForTable);
-                    $decode->decodeWeatherSrok12($dataForTable);
-                    $decode->decodeClouds($dataForTable);
-                    $decode->decodeCloudsC($dataForTable);
-                    $decode->decodeSoilCondition($dataForTable);
-
                     $dataOut = [
-                        'categories' => $categories,
+                        'categories' => $this->categories,
+                        'selectedCategories' => $categories,
                         'dataForTable' => $dataForTable->forPage($currentPage, PER_PAGE),
                         'countPages' => $countPages,
                         'currentPage' => $currentPage,
                         'paginationLinks' => $paginationLinks,
                     ];
 
-                    return view('site.table', $dataOut);
+//                    return response(json_encode($dataOut), 200);
+                    return view('site.kndaily.table', $dataOut);
                     break;
                 }
         }
