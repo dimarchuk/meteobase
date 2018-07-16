@@ -1,0 +1,45 @@
+<div class="table-responsive">
+    <table class="table table-condensed table-striped">
+        <thead>
+        <tr>
+            @foreach($categories as $category)
+                @foreach($selectedCategories as $selectedCategory)
+                    @if($category['code_col_name'] === $selectedCategory['code_col_name'])
+                        @php
+                            echo "<th>{$category['short_col_name']}</th>"
+                        @endphp
+                    @endif
+                @endforeach
+            @endforeach
+        </tr>
+        </thead>
+        <tbody>
+        @foreach($dataForTable as $item)
+            <tr>
+                @foreach($selectedCategories as $category)
+                    @php
+                        $codeCategory = $category['code_col_name'];
+                    @endphp
+
+                    {{--@if($codeCategory == 'A' || $codeCategory == 'WW'|| $codeCategory == 'W1' || $codeCategory == 'W2'--}}
+                    {{--|| $codeCategory == 'CL'|| $codeCategory == 'CM'|| $codeCategory == 'CH' || $codeCategory == 'E')--}}
+                        {{--@php--}}
+                            {{--echo "<td style = \"min-width: 270px;\">{$item->$codeCategory}</td>"--}}
+                        {{--@endphp--}}
+                    {{--@else--}}
+                        @php
+                            echo "<td>{$item[$codeCategory]}</td>"
+                        @endphp
+                    {{--@endif--}}
+                @endforeach
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
+</div>
+
+<ul class="pagination">
+    @php
+        echo $paginationLinks;
+    @endphp
+</ul>
