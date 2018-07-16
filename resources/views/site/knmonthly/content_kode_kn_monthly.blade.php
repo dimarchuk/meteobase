@@ -7,7 +7,7 @@
                         <li><a href="{!! url('/')!!}">КC-01(строковий)</a></li>
                         <li><a href="{!! url('/warep') !!}">WAREP</a></li>
                         <li><a href="{!! url('/kndaily') !!}">КC-01(добовий)</a></li>
-                        <li><a href="#">Дані за місяць</a></li>
+                        <li><a href="{!! url('/knmonthly') !!}">Дані за місяць</a></li>
                         <li><a href="#">CLIMAT(Сер. місячні дані)</a></li>
                     </ul>
                 </nav>
@@ -115,7 +115,7 @@
                                                             echo "<option disabled value=\"{$category['code_col_name']}\">{$category['col_name']}</option>"
                                                         @endphp
                                                     @else
-                                                        @if(in_array($category['code_col_name'], $selectedCategories))
+                                                        @if(in_array($category, $selectedCategories))
                                                             @php
                                                                 echo "<option selected value=\"{$category['code_col_name']}\">{$category['col_name']}</option>"
                                                             @endphp
@@ -125,7 +125,6 @@
                                                             @endphp
                                                         @endif
                                                     @endif
-
                                                 @else
                                                     @if($category['selekted_col'] == true)
                                                         @php
@@ -167,13 +166,13 @@
                             <thead>
                             <tr>
                                 @foreach($categories as $category)
-                                        @foreach($selectedCategories as $selectedCategory)
-                                            @if($category['code_col_name'] == $selectedCategory['code_col_name'])
-                                                @php
-                                                    echo "<th>{$category['short_col_name']}</th>"
-                                                @endphp
-                                            @endif
-                                        @endforeach
+                                    @foreach($selectedCategories as $selectedCategory)
+                                        @if($category['code_col_name'] == $selectedCategory['code_col_name'])
+                                            @php
+                                                echo "<th>{$category['short_col_name']}</th>"
+                                            @endphp
+                                        @endif
+                                    @endforeach
                                 @endforeach
                             </tr>
                             </thead>
@@ -181,10 +180,10 @@
                             @foreach($dataForTable as $item)
                                 <tr>
                                     @foreach($selectedCategories as $selectedCategory)
-                                            @php
-                                                $cat = $selectedCategory['code_col_name'];
-                                                echo "<td>{$item[$cat]}</td>"
-                                            @endphp
+                                        @php
+                                            $cat = $selectedCategory['code_col_name'];
+                                            echo "<td>{$item[$cat]}</td>"
+                                        @endphp
                                     @endforeach
                                 </tr>
                             @endforeach

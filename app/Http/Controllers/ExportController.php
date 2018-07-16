@@ -31,7 +31,6 @@ class ExportController extends Controller
         if ($group) {
             $export->group = $group;
         }
-
         $export->view();
 
         if (in_array('Data limit is limited', $export->getData())) {

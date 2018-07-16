@@ -53,6 +53,10 @@ class Kode_knController extends Controller
             $selectedRegions = isset($selectedFilters['regionName']) ? $selectedFilters['regionName'] : null;
             $selectesStations = isset($selectedFilters['stationName']) ? $selectedFilters['stationName'] : null;
 
+            /**
+             *
+             */
+
             $currentDate = Date('Y-m-d');
             $srok = new Srok([$currentDate, $currentDate]);
             $strok = ($selectedFilters['srok'] == 'All') ? [0, 3, 6, 9, 12, 15, 18, 21] : [(int)$selectedFilters['srok']];

@@ -1,7 +1,12 @@
 $(document).ready(function () {
 
     var path = location.pathname;
-
+    // console.log($('input[type=date]'));
+    // $('input[type=date]').each(function (index, value) {
+    //     value.setAttribute('type', 'month');
+    //     value.value = '2018-07';
+    //     console.log(value);
+    // });
     $('#regions').on('click', function (event) {
         // event.preventDefault();
         var regions_serialize = $('#regions-select').serialize() + "&requestName=selectStation";

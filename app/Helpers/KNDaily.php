@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Collection;
-use App\Exceptions;
 
 /**
  * Class KNDaily
@@ -73,7 +72,7 @@ class KNDaily
                         'IND_ST' => $item->IND_ST,
                         'DATE_CH' => $item->DATE_CH,
                     ];
-                        in_array($newData, $this->dataForTable) ?: $this->dataForTable[] = $newData;
+                    in_array($newData, $this->dataForTable) ?: $this->dataForTable[] = $newData;
                 }
             }
             $dateFrom = $dateFrom + 60 * 60 * 24;
@@ -90,7 +89,7 @@ class KNDaily
         //В запитах розібратись з датою, зробити щоб виводило на всі вказані дти
         foreach ($this->dataForTable as &$forTable) {
             $date = $forTable['DATE_CH'];
-            $prevDate = date('Y-m-d',strtotime($forTable['DATE_CH']) - (60 * 60 * 24));
+            $prevDate = date('Y-m-d', strtotime($forTable['DATE_CH']) - (60 * 60 * 24));
 
             $allDataSort = [];
             //Для @var $forTable беру колекцію відсортовану по індексу станції та даті

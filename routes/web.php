@@ -19,6 +19,15 @@ Route::get('/kndaily', ['uses' => 'KNDailyController@show']);
 Route::post('/kndaily', ['uses' => 'KNDailyController@getDataKodeKN']);
 
 /**
+ * kode KN-01 monthly
+ */
+//Route::get('/knmonthly', function () {
+//    return view('site.knmonthly.kode_kn_monthly');
+//});
+Route::get('/knmonthly', ['uses' => 'KNMonthlyController@show']);
+Route::post('/knmonthly', ['uses' => 'KNMonthlyController@getDataKodeKN']);
+
+/**
  * For Export to exel
  */
 Route::get('/export/{group?}', ['uses' => 'ExportController@export', 'as' => 'export']);

@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Helpers\{
-    Helper, Decode, KNDaily
+    Helper, KNDaily
 };
 use App\{
-    Category, Region, Station, Srok, UserCategory, Group9, User
+  Region, Station, UserCategory
 };
 
 use DB;
 use Auth;
-use function PHPSTORM_META\type;
 
 class KNDailyController extends Controller
 {
@@ -131,33 +129,46 @@ class KNDailyController extends Controller
     {
 
         $helper = new Helper();
-        $decode = new Decode();
         $regions = new Region();
         $stations = new Station();
 
         $uId = Auth::getUser()->getAuthIdentifier();
 
-        if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNday')->exists()) {
+        if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNdaily ')->exists()) {
+            $currentDate = date('Y-m-d');
+            $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
 
-            $selectedFilters = UserCategory::all()->where('user_id', '=', $uId)->where('page', 'kodeKNday')->first();
+            $selectedFilters = UserCategory::all()->where('user_id', '=', $uId)->where('page', 'kodeKNdaily ')->first();
             parse_str($selectedFilters->categories_list, $selectedFilters);
-
-            $selectedFilters['dateFrom'] = date('Y-m-d', (strtotime($selectedFilters['dateFrom']) - (60 * 60 * 24)));
-
-            if ($selectedFilters['dateTo'] == Date('Y-m-d')) {
-                $selectedFilters['dateTo'] = date('Y-m-d', (strtotime($selectedFilters['dateTo']) - (60 * 60 * 24)));
-
-            }
-
-            //add default categiry
-            $defaultColl = ['NAME_OBL', 'NAME_ST', 'IND_ST', 'DATE_CH'];
-            $helper->addItemsinArr($defaultColl, $selectedFilters['collumns']);
 
             $selectedRegions = isset($selectedFilters['regionName']) ? $selectedFilters['regionName'] : null;
             $selectesStations = isset($selectedFilters['stationName']) ? $selectedFilters['stationName'] : null;
 
-            $strok = [0, 3, 6, 9, 12, 15, 18, 21];
-            $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+            //add default categiry
+            $defaultColl = ['NAME_OBL', 'NAME_ST', 'IND_ST', 'DATE_CH'];
+            if (isset($selectedFilters['collumns'])) {
+                $collumns = $selectedFilters['collumns'];
+            } else $collumns = [];
+
+            $helper->addItemsinArr($defaultColl, $collumns);
+
+            //Выборка категорий по выбраным пользователем колонкам
+            foreach ($this->categories as $category) {
+                foreach ($collumns as $collumn) {
+                    if ($category['code_col_name'] == $collumn) {
+                        $categories[] = $category;
+                    }
+                }
+            }
+
+            $dateFrom = date('Y-m-d', (strtotime($selectedFilters['dateFrom']) - (60 * 60 * 24)));
+            $dateTo = $selectedFilters['dateTo'];
+            if ($selectedFilters['dateTo'] == $currentDate) {
+                if ($selectedFilters['dateFrom'] == $selectedFilters['dateTo']) {
+                    $dateFrom = date('Y-m-d', (strtotime($selectedFilters['dateFrom']) - ((60 * 60 * 24) * 2)));
+                }
+                $dateTo = date('Y-m-d', (strtotime($selectedFilters['dateTo']) - (60 * 60 * 24)));
+            }
 
             /**
              * Data filtering
@@ -169,8 +180,7 @@ class KNDailyController extends Controller
                     ->orderBy('CAT_STATION.OBL_ID', 'asc')
                     ->orderBy('CAT_STATION.IND_ST')
                     ->whereIn('CAT_STATION.OBL_ID', $selectedFilters['regionName'])
-                    ->whereIn('srok.SROK_CH', $strok)
-                    ->whereBetween('DATE_CH', [$selectedFilters['dateFrom'], $selectedFilters['dateTo']])
+                    ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
                     ->get();
 
             } else if (isset($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
@@ -181,8 +191,7 @@ class KNDailyController extends Controller
                     ->orderBy('CAT_STATION.IND_ST')
                     ->whereIn('CAT_STATION.OBL_ID', $selectedFilters['regionName'])
                     ->whereIn('CAT_STATION.IND_ST', $selectedFilters['stationName'])
-                    ->whereIn('srok.SROK_CH', $strok)
-                    ->whereBetween('DATE_CH', [$selectedFilters['dateFrom'], $selectedFilters['dateTo']])
+                    ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
                     ->get();
 
             } else if (empty($selectedFilters['regionName']) && isset($selectedFilters['stationName'])) {
@@ -192,8 +201,7 @@ class KNDailyController extends Controller
                     ->orderBy('CAT_STATION.OBL_ID', 'asc')
                     ->orderBy('CAT_STATION.IND_ST')
                     ->whereIn('CAT_STATION.IND_ST', $selectedFilters['stationName'])
-                    ->whereIn('srok.SROK_CH', $strok)
-                    ->whereBetween('DATE_CH', [$selectedFilters['dateFrom'], $selectedFilters['dateTo']])
+                    ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
                     ->get();
 
             } else if (empty($selectedFilters['regionName']) && empty($selectedFilters['stationName'])) {
@@ -202,30 +210,36 @@ class KNDailyController extends Controller
                     ->join('srok', 'CAT_STATION.IND_ST', '=', 'srok.IND_ST')
                     ->orderBy('CAT_STATION.OBL_ID', 'asc')
                     ->orderBy('CAT_STATION.IND_ST')
-                    ->whereBetween('DATE_CH', [$selectedFilters['dateFrom'], $selectedFilters['dateTo']])
+                    ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
                     ->get();
             }
+
+            if ($selectedFilters['dateFrom'] == $currentDate) {
+                $dateFrom = date('Y-m-d', (strtotime($selectedFilters['dateFrom']) - (60 * 60 * 24)));
+            } else {
+                $dateFrom = $selectedFilters['dateFrom'];
+            }
+            $kndaily = new KNDaily($dataForTable, ['dateFrom' => $dateFrom, 'dateTo' => $dateTo], $categories);
+            $tmp = $kndaily->calculate();
+
+            $dataForTable = collect($tmp);
 
             $countStr = count($dataForTable);
             $countPages = ceil($countStr / PER_PAGE);
 
-            $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/kndaily'),
-                $countPages, $currentPage, true) : "";
-
-            $decode->decodeBaricTendency($dataForTable);
-            $decode->decodeSoilCondition($dataForTable);
+            $paginationLinks = $countPages > 1 ? $helper->generateLinksForPagination(url('/kndaily'), $countPages, $currentPage, true) : "";
 
             /**
              * array with all data for view
-             */
+             */ 
             $data = [
                 'regions' => $regions->getAllRegions(),
-                'selectedRegions' => $selectedRegions,
                 'stations' => $stations->getAllStation(),
-                'selectedStations' => $selectesStations,
                 'categories' => $this->categories,
+                'selectedCategories' => $categories,
                 'dataForTable' => $dataForTable->forPage($currentPage, PER_PAGE),
-                'selectedCategories' => $selectedFilters['collumns'],
+                'selectedRegions' => $selectedRegions,
+                'selectedStations' => $selectesStations,
                 'paginationLinks' => $paginationLinks
             ];
 
@@ -235,9 +249,7 @@ class KNDailyController extends Controller
             $dateFrom = date('Y-m-d', (strtotime($currentDate) - (60 * 60 * 24) * 2));
             $dateTo = date('Y-m-d', (strtotime($currentDate) - (60 * 60 * 24)));
 
-
             $selectedCategories = $this->categories;
-//            dd($selectedCategories[0]['code_col_name'] == $categories[0]['code_col_name']);
             $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
 
             /**
@@ -284,7 +296,6 @@ class KNDailyController extends Controller
     public function getDataKodeKN()
     {
         $helper = new Helper();
-        $decode = new Decode();
         $stations = new Station();
 
         parse_str($_POST['data'], $data);
@@ -345,16 +356,16 @@ class KNDailyController extends Controller
                     /**
                      * Save selected filters
                      */
-//                    $uId = Auth::getUser()->getAuthIdentifier();
-//                    if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNdaily')->exists()) {
-//                        DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNdaily')->update(
-//                             ['categories_list' => $_POST['data']]
-//                        );
-//                    } else {
-//                        DB::table('user_categories')->where('user_id', $uId)->insert(
-//                            ['user_id' => $uId, 'page' => 'kodeKNdaily ', 'categories_list' => $_POST['data']]
-//                        );
-//                    }
+                    $uId = Auth::getUser()->getAuthIdentifier();
+                    if (DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNdaily')->exists()) {
+                        DB::table('user_categories')->where('user_id', $uId)->where('page', 'kodeKNdaily')->update(
+                            ['categories_list' => $_POST['data']]
+                        );
+                    } else {
+                        DB::table('user_categories')->where('user_id', $uId)->insert(
+                            ['user_id' => $uId, 'page' => 'kodeKNdaily ', 'categories_list' => $_POST['data']]
+                        );
+                    }
 
 
                     /**
@@ -368,7 +379,6 @@ class KNDailyController extends Controller
                             ->orderBy('CAT_STATION.IND_ST')
                             ->whereIn('CAT_STATION.OBL_ID', $data['regionName'])
                             ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
-//                            ->select($collumns)
                             ->get();
 
                     } else if (isset($data['regionName']) && isset($data['stationName'])) {
@@ -380,7 +390,6 @@ class KNDailyController extends Controller
                             ->whereIn('CAT_STATION.OBL_ID', $data['regionName'])
                             ->whereIn('CAT_STATION.IND_ST', $data['stationName'])
                             ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
-//                            ->select($collumns)
                             ->get();
 
                     } else if (empty($data['regionName']) && isset($data['stationName'])) {
@@ -391,8 +400,8 @@ class KNDailyController extends Controller
                             ->orderBy('CAT_STATION.IND_ST')
                             ->whereIn('CAT_STATION.IND_ST', $data['stationName'])
                             ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
-//                            ->select($collumns)
                             ->get();
+
                     } else if (empty($data['regionName']) && empty($data['stationName'])) {
                         $dataForTable = DB::table('CAT_STATION')
                             ->join('CAT_OBL', 'CAT_STATION.OBL_ID', '=', 'CAT_OBL.OBL_ID')
@@ -400,7 +409,6 @@ class KNDailyController extends Controller
                             ->orderBy('CAT_STATION.OBL_ID', 'asc')
                             ->orderBy('CAT_STATION.IND_ST')
                             ->whereBetween('DATE_CH', [$dateFrom, $dateTo])
-//                            ->select($collumns)
                             ->get();
                     }
 
@@ -428,7 +436,6 @@ class KNDailyController extends Controller
                         'paginationLinks' => $paginationLinks,
                     ];
 
-//                    return response(json_encode($dataOut), 200);
                     return view('site.kndaily.table', $dataOut);
                     break;
                 }
